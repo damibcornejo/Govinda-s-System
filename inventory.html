@@ -10,8 +10,7 @@
   <header>
     <h1>Inventario</h1>
     <nav>
-      <a href="menu.html" class="menu-link">Volver al Menú</a>
-      <a href="orders.html" class="menu-link">Pedidos</a>
+      <a href="index.html" class="menu-link">Volver al Menú</a>
     </nav>
   </header>
 
@@ -113,6 +112,7 @@
 
       // Guardar el inventario en localStorage
       localStorage.setItem('inventory', JSON.stringify(inventory));
+      console.log('inventario guardad',inventory);
 
       // Actualizar la vista del inventario
       renderInventory();
