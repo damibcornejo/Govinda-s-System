@@ -94,3 +94,36 @@ nav {
 .inventory-list button:hover {
   background-color: #c0392b;
 }
+/* Contenedores de Inventario */
+section {
+  max-width: 800px;
+  margin: 20px auto;
+  text-align: center;
+}
+
+/* Centrado de los formularios y productos en inventario */
+.inventory-form {
+  display: flex;
+  flex-direction: column;
+  max-width: 400px;
+  margin: 20px auto;
+  align-items: center;  /* Alinea los elementos en el centro */
+}
+
+.inventory-list {
+  list-style: none;
+  padding: 0;
+  text-align: left;  /* Deja el texto alineado a la izquierda dentro de los productos */
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Estilo para los productos */
+.inventory-list li {
+  background-color: #ecf0f1;
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 5px;
+  text-align: center;
+}
+
