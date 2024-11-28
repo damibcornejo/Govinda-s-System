@@ -47,6 +47,11 @@
     // Cargar inventario desde localStorage, si no hay, inicializa vacío
     let inventory = JSON.parse(localStorage.getItem('inventory')) || { products: [], rawMaterials: [] };
     console.log(inventory);
+    if(!inventory){
+      inventory={products: [], rawMaterials: [] };
+    }else{
+      inventory.products=inventory.products || [];
+      inventory.rawMaterials=inventory.rawMaterials || [];
     
     // Función para renderizar los productos en el inventario
     function renderInventory() {
@@ -58,29 +63,33 @@
       // Limpiar las listas antes de renderizar
       productList.innerHTML = '';
       rawMaterialList.innerHTML = '';
+       // Verificar si `products` es un array y si no está vacío
+  if (Array.isArray(inventory.products)) {
+    inventory.products.forEach(item => {
+      const li = document.createElement('li');
+      li.innerHTML = `<p><strong>${item.name}</strong></p>
+                      <p>Precio: $${item.price}</p>
+                      <p>Cantidad: ${item.quantity}</p>`;
+      productList.appendChild(li);
+    });
+  }
 
-      // Renderizar productos
-      inventory.products.forEach(item => {
-        const li = document.createElement('li');
-        li.innerHTML = `<p><strong>${item.name}</strong></p>
-                        <p>Precio: $${item.price}</p>
-                        <p>Cantidad: ${item.quantity}</p>`;
-        productList.appendChild(li);
-      });
+  // Verificar si `rawMaterials` es un array y si no está vacío
+  if (Array.isArray(inventory.rawMaterials)) {
+    inventory.rawMaterials.forEach(item => {
+      const li = document.createElement('li');
+      li.innerHTML = `<p><strong>${item.name}</strong></p>
+                      <p>Precio: $${item.price}</p>
+                      <p>Cantidad: ${item.quantity}</p>`;
+      rawMaterialList.appendChild(li);
+    });
+  }
 
-      // Renderizar materias primas
-      inventory.rawMaterials.forEach(item => {
-        const li = document.createElement('li');
-        li.innerHTML = `<p><strong>${item.name}</strong></p>
-                        <p>Precio: $${item.price}</p>
-                        <p>Cantidad: ${item.quantity}</p>`;
-        rawMaterialList.appendChild(li);
-      });
-
-      // Actualizar los contadores de productos y materias primas
-      productCount.textContent = inventory.products.length;
-      rawMaterialCount.textContent = inventory.rawMaterials.length;
-    }
+  // Actualizar los contadores de productos y materias primas
+  productCount.textContent = inventory.products.length;
+  rawMaterialCount.textContent = inventory.rawMaterials.length;
+}
+     
 
     // Manejar el formulario de agregar producto o materia prima
     document.getElementById('add-item-form').addEventListener('submit', function(event) {
