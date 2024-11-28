@@ -4,123 +4,95 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pedidos - Govinda's</title>
-  <link rel="stylesheet" href="styles.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background-color: #f4f4f4;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+    h1 {
+      margin-bottom: 20px;
+    }
+    .order-form input,
+    .order-form button {
+      margin: 10px 0;
+      padding: 10px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    button {
+      background-color: #6ab04c;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      cursor: pointer;
+      border-radius: 5px;
+      margin: 5px;
+    }
+    button:hover {
+      background-color: #58a043;
+    }
+  </style>
 </head>
 <body>
-  <header>
-    <h1>Pedidos</h1>
-    <nav>
-      <a href="index.html" class="menu-link">Volver al Menú</a>
-    </nav>
-  </header>
-
-  <main>
-    <section>
-      <h2>Formulario de Pedido</h2>
-      <form id="order-form">
-        <label for="product-select">Selecciona un Producto:</label>
-        <select id="product-select" required>
-          <option value="">Elige un producto</option>
-        </select>
-        <label for="quantity">Cantidad:</label>
-        <input type="number" id="quantity" required>
-        <button type="submit">Agregar al Pedido</button>
-      </form>
-    </section>
-
-    <section>
-      <h2>Resumen del Pedido</h2>
-      <ul id="order-summary"></ul>
-      <p><strong>Total:</strong> $<span id="total-price">0</span></p>
-      <button onclick="placeOrder()">Realizar Pedido</button>
-    </section>
-  </main>
+  <h1>Gestión de Pedidos</h1>
+  <form id="order-form" class="order-form">
+    <input type="text" id="order-name" placeholder="Nombre del pedido" required>
+    <input type="number" id="order-quantity" placeholder="Cantidad" required>
+    <button type="button" onclick="addOrder()">Agregar Pedido</button>
+  </form>
+  <ul id="order-list"></ul>
 
   <script>
-    // Cargar inventario desde localStorage
-    let inventory = JSON.parse(localStorage.getItem('inventory')) || { products: [], rawMaterials: [] };
-    let orderItems = [];
+    let orders = JSON.parse(localStorage.getItem('orders')) || [];
 
-    // Llenar el desplegable con los productos del inventario
-    function populateProductSelect() {
-      const productSelect = document.getElementById('product-select');
-      productSelect.innerHTML = ''; // Limpiar las opciones antes de agregar nuevas
-
-      if (inventory.products.length > 0) {
-        inventory.products.forEach((item, index) => {
-          const option = document.createElement('option');
-          option.value = index;
-          option.textContent = item.name;
-          productSelect.appendChild(option);
-        });
-      } else {
-        // Si no hay productos, muestra un mensaje de advertencia
-        const option = document.createElement('option');
-        option.textContent = 'No hay productos disponibles';
-        productSelect.appendChild(option);
-      }
+    function renderOrders() {
+      const orderList = document.getElementById('order-list');
+      orderList.innerHTML = '';
+      orders.forEach((order, index) => {
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <p><strong>${order.name}</strong> - Cantidad: ${order.quantity}</p>
+          <button onclick="deleteOrder(${index})">Eliminar</button>
+        `;
+        orderList.appendChild(li);
+      });
     }
 
-    // Manejar la adición de productos al pedido
-    document.getElementById('order-form').addEventListener('submit', function(event) {
-      event.preventDefault();
-      const selectedProductIndex = document.getElementById('product-select').value;
-      const quantity = parseInt(document.getElementById('quantity').value);
+    function addOrder() {
+      const name = document.getElementById('order-name').value;
+      const quantity = parseInt(document.getElementById('order-quantity').value, 10);
 
-      if (selectedProductIndex === "" || isNaN(quantity) || quantity <= 0) {
-        alert("Por favor, selecciona un producto y cantidad válidos.");
+      if (!name || isNaN(quantity)) {
+        alert('Por favor, completa todos los campos correctamente.');
         return;
       }
 
-      const product = inventory.products[selectedProductIndex];
-      const totalPrice = product.price * quantity;
-
-      // Agregar el producto al pedido
-      orderItems.push({ product: product.name, quantity, totalPrice, unitPrice: product.price });
-
-      renderOrderSummary();
-    });
-
-    // Mostrar el resumen del pedido
-    function renderOrderSummary() {
-      const orderSummary = document.getElementById('order-summary');
-      const totalPriceElement = document.getElementById('total-price');
-      orderSummary.innerHTML = '';
-      let total = 0;
-
-      orderItems.forEach(item => {
-        const li = document.createElement('li');
-        li.textContent = `${item.product} x${item.quantity} - $${item.unitPrice} c/u - Total: $${item.totalPrice}`;
-        orderSummary.appendChild(li);
-        total += item.totalPrice;
-      });
-
-      totalPriceElement.textContent = total.toFixed(2);
+      orders.push({ name, quantity });
+      saveOrders();
+      renderOrders();
+      document.getElementById('order-form').reset();
     }
 
-    // Guardar el pedido en el historial
-    function placeOrder() {
-      const orderDate = new Date().toLocaleString(); // Obtener la fecha y hora actual
-      const orderId = 'ORD' + Date.now(); // Crear un ID único para el pedido
-
-      const orderHistory = JSON.parse(localStorage.getItem('orderHistory')) || [];
-      orderHistory.push({
-        orderId, 
-        orderItems, 
-        orderDate, 
-        totalPrice: parseFloat(document.getElementById('total-price').textContent)
-      });
-
-      // Guardar el historial de pedidos en localStorage
-      localStorage.setItem('orderHistory', JSON.stringify(orderHistory));
-
-      alert('Pedido realizado con éxito');
-      orderItems = []; // Limpiar el pedido después de realizarlo
-      renderOrderSummary(); // Actualizar el resumen del pedido
+    function deleteOrder(index) {
+      orders.splice(index, 1);
+      saveOrders();
+      renderOrders();
     }
 
-    // Llamar a la función para llenar el desplegable con los productos
-    populateProductSelect();
+    function saveOrders() {
+      localStorage.setItem('orders', JSON.stringify(orders));
+    }
+
+    renderOrders();
   </script>
 </body>
 </html>
