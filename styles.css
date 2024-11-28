@@ -1,20 +1,16 @@
-/* Reset básico para evitar estilos predeterminados del navegador */
+/* Reset de estilos */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* Estilos globales */
+/* Estilo global */
 body {
   font-family: Arial, sans-serif;
   background-color: #f4f4f4;
   color: #333;
   line-height: 1.6;
-}
-
-h1, h2 {
-  color: #2c3e50;
 }
 
 header {
@@ -24,35 +20,45 @@ header {
   text-align: center;
 }
 
-nav {
-  margin-top: 10px;
+h1, h2 {
+  color: #2c3e50;
 }
 
-.menu-link {
-  display: inline-block;
-  margin: 10px 0;
-  padding: 10px 20px;
-  background-color: #6ab04c;
-  color: white;
-  text-decoration: none;
+/* Sección del inventario y materia prima */
+section {
+  max-width: 900px;
+  margin: 20px auto;
+  text-align: center;
+}
+
+/* Centrado de productos y materias primas */
+.inventory-list, .raw-material-list {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* 2 columnas para productos y materias primas */
+  gap: 15px;
+  justify-items: center;
+}
+
+.inventory-list li, .raw-material-list li {
+  background-color: #ecf0f1;
+  padding: 10px;
   border-radius: 5px;
-  transition: background-color 0.3s;
+  width: 100%;
+  max-width: 200px;
+  text-align: center;
 }
 
-.menu-link:hover {
-  background-color: #58a043;
-}
-
-/* Formulario de inventario */
 .inventory-form {
   display: flex;
   flex-direction: column;
   max-width: 400px;
   margin: 20px auto;
+  align-items: center;
 }
 
-.inventory-form input,
-.inventory-form button {
+.inventory-form input, .inventory-form select, .inventory-form button {
   padding: 10px;
   margin-bottom: 10px;
   font-size: 16px;
@@ -70,60 +76,15 @@ nav {
   background-color: #2ecc71;
 }
 
-/* Listado de inventarios */
-.inventory-list {
-  list-style: none;
-  padding: 0;
-}
-
-.inventory-list li {
-  background-color: #ecf0f1;
-  margin-bottom: 10px;
-  padding: 10px;
-  border-radius: 5px;
-}
-
-.inventory-list button {
-  margin-left: 10px;
-  background-color: #e74c3c;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-
-.inventory-list button:hover {
-  background-color: #c0392b;
-}
-/* Contenedores de Inventario */
-section {
+/* Resumen del inventario */
+.inventory-summary {
+  background-color: #f0f0f0;
+  padding: 20px;
+  border-radius: 10px;
+  margin: 20px auto;
+  text-align: center;
   max-width: 800px;
-  margin: 20px auto;
-  text-align: center;
 }
 
-/* Centrado de los formularios y productos en inventario */
-.inventory-form {
-  display: flex;
-  flex-direction: column;
-  max-width: 400px;
-  margin: 20px auto;
-  align-items: center;  /* Alinea los elementos en el centro */
-}
-
-.inventory-list {
-  list-style: none;
-  padding: 0;
-  text-align: left;  /* Deja el texto alineado a la izquierda dentro de los productos */
-  max-width: 600px;
-  margin: 0 auto;
-}
-
-/* Estilo para los productos */
-.inventory-list li {
-  background-color: #ecf0f1;
-  margin-bottom: 10px;
-  padding: 10px;
-  border-radius: 5px;
-  text-align: center;
 }
 
