@@ -31,25 +31,34 @@
     <section>
       <h2>Resumen del Pedido</h2>
       <ul id="order-summary"></ul>
-      <p><strong>Total:</strong> <span id="total-price">0</span></p>
+      <p><strong>Total:</strong> $<span id="total-price">0</span></p>
       <button onclick="placeOrder()">Realizar Pedido</button>
     </section>
   </main>
 
   <script>
     // Cargar inventario desde localStorage
-    let inventory = JSON.parse(localStorage.getItem('inventory')) || { products: [] };
+    let inventory = JSON.parse(localStorage.getItem('inventory')) || { products: [], rawMaterials: [] };
     let orderItems = [];
 
     // Llenar el desplegable con los productos del inventario
     function populateProductSelect() {
       const productSelect = document.getElementById('product-select');
-      inventory.products.forEach((item, index) => {
+      productSelect.innerHTML = ''; // Limpiar las opciones antes de agregar nuevas
+
+      if (inventory.products.length > 0) {
+        inventory.products.forEach((item, index) => {
+          const option = document.createElement('option');
+          option.value = index;
+          option.textContent = item.name;
+          productSelect.appendChild(option);
+        });
+      } else {
+        // Si no hay productos, muestra un mensaje de advertencia
         const option = document.createElement('option');
-        option.value = index;
-        option.textContent = item.name;
+        option.textContent = 'No hay productos disponibles';
         productSelect.appendChild(option);
-      });
+      }
     }
 
     // Manejar la adición de productos al pedido
@@ -66,6 +75,7 @@
       const product = inventory.products[selectedProductIndex];
       const totalPrice = product.price * quantity;
 
+      // Agregar el producto al pedido
       orderItems.push({ product: product.name, quantity, totalPrice, unitPrice: product.price });
 
       renderOrderSummary();
@@ -94,26 +104,19 @@
       const orderId = 'ORD' + Date.now(); // Crear un ID único para el pedido
 
       const orderHistory = JSON.parse(localStorage.getItem('orderHistory')) || [];
-
-      // Crear un nuevo objeto de pedido con todos los detalles
-      const newOrder = {
-        orderId,
-        orderItems,
-        orderDate,
-        totalPrice: parseFloat(document.getElementById('total-price').textContent),
-      };
-
-      // Agregar el nuevo pedido al historial
-      orderHistory.push(newOrder);
+      orderHistory.push({
+        orderId, 
+        orderItems, 
+        orderDate, 
+        totalPrice: parseFloat(document.getElementById('total-price').textContent)
+      });
 
       // Guardar el historial de pedidos en localStorage
       localStorage.setItem('orderHistory', JSON.stringify(orderHistory));
 
       alert('Pedido realizado con éxito');
-
-      // Limpiar los elementos del pedido después de guardarlo
-      orderItems = [];
-      renderOrderSummary();
+      orderItems = []; // Limpiar el pedido después de realizarlo
+      renderOrderSummary(); // Actualizar el resumen del pedido
     }
 
     // Llamar a la función para llenar el desplegable con los productos
