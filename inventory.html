@@ -45,56 +45,68 @@
 
   <script>
     // Inicializar inventario desde localStorage
-    let inventory = JSON.parse(localStorage.getItem('inventory')) || [];
+let inventory = JSON.parse(localStorage.getItem('inventory')) || [];
 
-    // Función para renderizar el inventario
-    function renderInventory() {
-      const productList = document.getElementById('product-list');
-      const productCount = document.getElementById('product-count');
+// Función para renderizar el inventario
+function renderInventory() {
+  const productList = document.getElementById('product-list');
+  const productCount = document.getElementById('product-count');
 
-      // Limpiar la lista de productos
-      productList.innerHTML = '';
+  // Limpiar la lista de productos
+  productList.innerHTML = '';
 
-      // Renderizar los productos del inventario
-      inventory.forEach((product, index) => {
-        const li = document.createElement('li');
-        li.innerHTML = `
-          <strong>${product.name}</strong> - $${product.price} - ${product.quantity} unidades
-          <button onclick="deleteProduct(${index})">Eliminar</button>
-        `;
-        productList.appendChild(li);
-      });
+  // Renderizar los productos del inventario
+  inventory.forEach((product, index) => {
+    const li = document.createElement('li');
+    li.innerHTML = `
+      <strong>${product.name}</strong> - $${product.price} - ${product.quantity} unidades
+      <button onclick="deleteProduct(${index})">Eliminar</button>
+    `;
+    productList.appendChild(li);
+  });
 
-      // Actualizar el contador de productos
-      productCount.textContent = inventory.length;
-    }
+  // Actualizar el contador de productos
+  productCount.textContent = inventory.length;
+}
 
-    // Manejar el envío del formulario para agregar productos
-    document.getElementById('add-item-form').addEventListener('submit', function(event) {
-      event.preventDefault();
+// Manejar el envío del formulario para agregar productos
+document.getElementById('add-item-form').addEventListener('submit', function(event) {
+  event.preventDefault();
 
-      const name = document.getElementById('item-name').value.trim();
-      const price = parseFloat(document.getElementById('item-price').value);
-      const quantity = parseInt(document.getElementById('item-quantity').value);
+  const name = document.getElementById('item-name').value.trim();
+  const price = parseFloat(document.getElementById('item-price').value);
+  const quantity = parseInt(document.getElementById('item-quantity').value);
 
-      // Validar campos
-      if (!name || isNaN(price) || isNaN(quantity) || price <= 0 || quantity <= 0) {
-        alert("Por favor, completa todos los campos correctamente.");
-        return;
-      }
+  // Validar campos
+  if (!name || isNaN(price) || isNaN(quantity) || price <= 0 || quantity <= 0) {
+    alert("Por favor, completa todos los campos correctamente.");
+    return;
+  }
 
-      // Agregar producto al inventario
-      inventory.push({ name, price, quantity });
+  // Agregar producto al inventario
+  inventory.push({ name, price, quantity });
 
-      // Guardar el inventario en localStorage
-      localStorage.setItem('inventory', JSON.stringify(inventory));
+  // Guardar el inventario en localStorage
+  localStorage.setItem('inventory', JSON.stringify(inventory));
 
-      // Renderizar inventario actualizado
-      renderInventory();
+  // Renderizar inventario actualizado
+  renderInventory();
 
-      // Limpiar formulario
-      document.getElementById('add-item-form').reset();
-    });
+  // Limpiar formulario
+  document.getElementById('add-item-form').reset();
+});
 
-    // Función para eliminar un producto del inventario
-    function deleteProduct(index) 
+// Función para eliminar un producto del inventario
+function deleteProduct(index) {
+  // Eliminar el producto del inventario
+  inventory.splice(index, 1);
+
+  // Guardar el inventario actualizado en localStorage
+  localStorage.setItem('inventory', JSON.stringify(inventory));
+
+  // Renderizar inventario actualizado
+  renderInventory();
+}
+
+// Renderizar el inventario al cargar la página
+renderInventory();
