@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inventario - Govinda's</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <h1>Inventario</h1>
+  </header>
+  <main>
+    <section>
+      <h2>Productos</h2>
+      <form id="products-form" class="inventory-form">
+        <input type="text" id="product-name" placeholder="Nombre del producto" required>
+        <input type="number" id="product-quantity" placeholder="Cantidad" required>
+        <input type="number" id="product-price" placeholder="Precio" required>
+        <button type="button" onclick="addInventoryItem('products')">Agregar Producto</button>
+      </form>
+      <ul id="products-list" class="inventory-list"></ul>
+    </section>
+
+    <section>
+      <h2>Materias Primas</h2>
+      <form id="raw-materials-form" class="inventory-form">
+        <input type="text" id="material-name" placeholder="Nombre de la materia prima" required>
+        <input type="number" id="material-quantity" placeholder="Cantidad" required>
+        <button type="button" onclick="addInventoryItem('rawMaterials')">Agregar Materia Prima</button>
+      </form>
+      <ul id="raw-materials-list" class="inventory-list"></ul>
+    </section>
+  </main>
+
+  <script>
+    let inventory = JSON.parse(localStorage.getItem('inventory')) || { products: [], rawMaterials: [] };
+
+    function renderInventory(type) {
+      const listId = type === 'products' ? 'products-list' : 'raw-materials-list';
+      const listElement = document.getElementById(listId);
+      listElement.innerHTML = '';
+
+      inventory[type].forEach((item, index) => {
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <p><strong>${item.name}</strong> - Cantidad: ${item.quantity} - Precio: ${item.price || 'N/A'}</p>
+          <button onclick="editInventoryItem('${type}', ${index})">Editar</button>
+          <button onclick="deleteInventoryItem('${type}', ${index})">Eliminar</button>
+        `;
+        listElement.appendChild(li);
+      });
+    }
+
+    function addInventoryItem(type) {
+      const nameInput = type === 'products' ? 'product-name' : 'material-name';
+      const quantityInput = type === 'products' ? 'product-quantity' : 'material-quantity';
+      const priceInput = type === 'products' ? 'product-price' : null;
+
+      const name = document.getElementById(nameInput).value;
+      const quantity = parseInt(document.getElementById(quantityInput).value, 10);
+      const price = priceInput ? parseFloat(document.getElementById(priceInput).value) : null;
+
+      if (!name || isNaN(quantity)) {
+        alert('Por favor, completa todos los campos correctamente.');
+        return;
+      }
+
+      inventory[type].push({ name, quantity, price });
+      saveInventory();
+      renderInventory(type);
+
+      document.getElementById(nameInput).value = '';
+      document.getElementById(quantityInput).value = '';
+      if (priceInput) document.getElementById(priceInput).value = '';
+    }
+
+    function editInventoryItem(type, index) {
+      const newName = prompt('Nuevo nombre:', inventory[type][index].name);
+      const newQuantity = prompt('Nueva cantidad:', inventory[type][index].quantity);
+      const newPrice = type === 'products' ? prompt('Nuevo precio:', inventory[type][index].price) : null;
+
+      if (newName) inventory[type][index].name = newName;
+      if (newQuantity) inventory[type][index].quantity = parseInt(newQuantity, 10);
+      if (newPrice && type === 'products') inventory[type][index].price = parseFloat(newPrice);
+
+      saveInventory();
+      renderInventory(type);
+    }
+
+    function deleteInventoryItem(type, index) {
+      inventory[type].splice(index, 1);
+      saveInventory();
+      renderInventory(type);
+    }
+
+    function saveInventory() {
+      localStorage.setItem('inventory', JSON.stringify(inventory));
+    }
+
+    renderInventory('products');
+    renderInventory('rawMaterials');
+  </script>
+</body>
+</html>
