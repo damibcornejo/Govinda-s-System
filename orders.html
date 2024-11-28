@@ -13,6 +13,7 @@
       <a href="index.html" class="menu-link">Volver al Menú</a>
     </nav>
   </header>
+
   <main>
     <section>
       <h2>Formulario de Pedido</h2>
@@ -36,9 +37,11 @@
   </main>
 
   <script>
+    // Cargar inventario desde localStorage
     let inventory = JSON.parse(localStorage.getItem('inventory')) || { products: [], rawMaterials: [] };
     let orderItems = [];
 
+    // Llenar el desplegable con los productos del inventario
     function populateProductSelect() {
       const productSelect = document.getElementById('product-select');
       inventory.products.forEach((item, index) => {
@@ -49,6 +52,7 @@
       });
     }
 
+    // Manejar la adición de productos al pedido
     document.getElementById('order-form').addEventListener('submit', function(event) {
       event.preventDefault();
       const selectedProductIndex = document.getElementById('product-select').value;
@@ -67,37 +71,7 @@
       renderOrderSummary();
     });
 
+    // Mostrar el resumen del pedido
     function renderOrderSummary() {
-      const orderSummary = document.getElementById('order-summary');
-      const totalPriceElement = document.getElementById('total-price');
-      orderSummary.innerHTML = '';
-      let total = 0;
+      const orderSummary = document.getElementById
 
-      orderItems.forEach(item => {
-        const li = document.createElement('li');
-        li.textContent = `${item.product} x${item.quantity} - $${item.unitPrice} c/u - Total: $${item.totalPrice}`;
-        orderSummary.appendChild(li);
-        total += item.totalPrice;
-      });
-
-      totalPriceElement.textContent = total.toFixed(2);
-    }
-
-    function placeOrder() {
-      const orderDate = new Date().toLocaleString();
-      const orderId = 'ORD' + Date.now();
-
-      const orderHistory = JSON.parse(localStorage.getItem('orderHistory')) || [];
-      orderHistory.push({ orderId, orderItems, orderDate, totalPrice: parseFloat(document.getElementById('total-price').textContent) });
-
-      localStorage.setItem('orderHistory', JSON.stringify(orderHistory));
-      alert('Pedido realizado con éxito');
-      orderItems = [];
-      renderOrderSummary();
-    }
-
-    // Llamar a la función para llenar el desplegable de productos
-    populateProductSelect();
-  </script>
-</body>
-</html>
