@@ -11,6 +11,7 @@
     <h1>Pedidos</h1>
     <nav>
       <a href="index.html" class="menu-link">Volver al Menú</a>
+      <a href="inventario.html" class="menu-link">Ir al Inventario</a>
     </nav>
   </header>
 
@@ -23,7 +24,7 @@
           <option value="">Elige un producto</option>
         </select>
         <label for="quantity">Cantidad:</label>
-        <input type="number" id="quantity" required>
+        <input type="number" id="quantity" min="1" required>
         <button type="submit">Agregar al Pedido</button>
       </form>
     </section>
@@ -38,44 +39,68 @@
 
   <script>
     // Cargar inventario desde localStorage
-    let inventory = JSON.parse(localStorage.getItem('inventory')) || { products: [], rawMaterials: [] };
-    let orderItems = [];
+    let inventory = JSON.parse(localStorage.getItem('inventory')) || [];
+    let orderItems = []; // Lista de productos del pedido actual
 
-    // Llenar el desplegable con los productos del inventario
+    // Llenar el desplegable con los productos disponibles en el inventario
     function populateProductSelect() {
       const productSelect = document.getElementById('product-select');
-      inventory.products.forEach((item, index) => {
-        const option = document.createElement('option');
-        option.value = index;
-        option.textContent = item.name;
-        productSelect.appendChild(option);
+      productSelect.innerHTML = '<option value="">Elige un producto</option>'; // Reset
+
+      inventory.forEach((product, index) => {
+        if (product.quantity > 0) { // Mostrar solo productos con stock
+          const option = document.createElement('option');
+          option.value = index; // Usamos el índice como valor
+          option.textContent = `${product.name} (Stock: ${product.quantity})`;
+          productSelect.appendChild(option);
+        }
       });
     }
 
-    // Manejar la adición de productos al pedido
+    // Manejar el formulario para agregar productos al pedido
     document.getElementById('order-form').addEventListener('submit', function(event) {
       event.preventDefault();
+
       const selectedProductIndex = document.getElementById('product-select').value;
       const quantity = parseInt(document.getElementById('quantity').value);
 
       if (selectedProductIndex === "" || isNaN(quantity) || quantity <= 0) {
-        alert("Por favor, selecciona un producto y cantidad válidos.");
+        alert("Por favor, selecciona un producto y una cantidad válida.");
         return;
       }
 
-      const product = inventory.products[selectedProductIndex];
+      const product = inventory[selectedProductIndex];
+
+      if (quantity > product.quantity) {
+        alert(`No hay suficiente stock para ${product.name}. Máximo disponible: ${product.quantity}.`);
+        return;
+      }
+
+      // Reducir stock en el inventario
+      product.quantity -= quantity;
+
+      // Agregar producto al pedido
       const totalPrice = product.price * quantity;
+      orderItems.push({ 
+        product: product.name, 
+        quantity, 
+        totalPrice, 
+        unitPrice: product.price 
+      });
 
-      orderItems.push({ product: product.name, quantity, totalPrice, unitPrice: product.price });
+      // Guardar inventario actualizado en localStorage
+      localStorage.setItem('inventory', JSON.stringify(inventory));
 
-      renderOrderSummary();
+      // Actualizar la vista
+      populateProductSelect(); // Actualizar el dropdown
+      renderOrderSummary(); // Actualizar el resumen del pedido
     });
 
-    // Mostrar el resumen del pedido
+    // Renderizar el resumen del pedido
     function renderOrderSummary() {
       const orderSummary = document.getElementById('order-summary');
       const totalPriceElement = document.getElementById('total-price');
-      orderSummary.innerHTML = '';
+      orderSummary.innerHTML = ''; // Limpiar resumen previo
       let total = 0;
 
       orderItems.forEach(item => {
@@ -88,21 +113,32 @@
       totalPriceElement.textContent = total.toFixed(2);
     }
 
-    // Guardar el pedido en el historial
+    // Realizar el pedido y guardarlo en el historial
     function placeOrder() {
+      if (orderItems.length === 0) {
+        alert("No hay productos en el pedido.");
+        return;
+      }
+
       const orderDate = new Date().toLocaleString();
       const orderId = 'ORD' + Date.now();
 
       const orderHistory = JSON.parse(localStorage.getItem('orderHistory')) || [];
-      orderHistory.push({ orderId, orderItems, orderDate, totalPrice: parseFloat(document.getElementById('total-price').textContent) });
+      orderHistory.push({ 
+        orderId, 
+        orderItems, 
+        orderDate, 
+        totalPrice: parseFloat(document.getElementById('total-price').textContent) 
+      });
 
       localStorage.setItem('orderHistory', JSON.stringify(orderHistory));
+
       alert('Pedido realizado con éxito');
-      orderItems = [];
-      renderOrderSummary();
+      orderItems = []; // Vaciar el pedido actual
+      renderOrderSummary(); // Actualizar la vista
     }
 
-    // Llamar a la función para llenar el desplegable con los productos
+    // Inicializar el dropdown de productos al cargar la página
     populateProductSelect();
   </script>
 </body>
