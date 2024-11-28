@@ -10,14 +10,14 @@
   <header>
     <h1>Inventario</h1>
     <nav>
-      <a href="index.html" class="menu-link">Volver al Menú</a>
-    
+      <a href="menu.html" class="menu-link">Volver al Menú</a>
+      <a href="orders.html" class="menu-link">Pedidos</a>
     </nav>
   </header>
 
   <main>
     <section>
-      
+      <h2>Productos</h2>
       <div class="inventory-summary">
         <h3>Resumen de Inventario</h3>
         <p>Total de productos: <span id="product-count">0</span></p>
@@ -25,7 +25,7 @@
       </div>
       <ul class="inventory-list" id="product-list"></ul>
 
-      
+      <h2>Materias Primas</h2>
       <ul class="raw-material-list" id="raw-material-list"></ul>
 
       <h2>Agregar Producto/Materia Prima</h2>
@@ -44,7 +44,7 @@
   </main>
 
   <script>
-    // Cargar inventario desde localStorage
+    // Cargar inventario desde localStorage, si no hay, inicializa vacío
     let inventory = JSON.parse(localStorage.getItem('inventory')) || { products: [], rawMaterials: [] };
 
     // Función para renderizar los productos en el inventario
@@ -58,6 +58,7 @@
       productList.innerHTML = '';
       rawMaterialList.innerHTML = '';
 
+      // Renderizar productos
       inventory.products.forEach(item => {
         const li = document.createElement('li');
         li.innerHTML = `<p><strong>${item.name}</strong></p>
@@ -66,6 +67,7 @@
         productList.appendChild(li);
       });
 
+      // Renderizar materias primas
       inventory.rawMaterials.forEach(item => {
         const li = document.createElement('li');
         li.innerHTML = `<p><strong>${item.name}</strong></p>
@@ -74,6 +76,7 @@
         rawMaterialList.appendChild(li);
       });
 
+      // Actualizar los contadores de productos y materias primas
       productCount.textContent = inventory.products.length;
       rawMaterialCount.textContent = inventory.rawMaterials.length;
     }
@@ -87,6 +90,13 @@
       const type = document.getElementById('item-type').value;
       const image = document.getElementById('item-image').files[0];
 
+      // Validación de datos
+      if (!name || isNaN(price) || isNaN(quantity) || quantity <= 0) {
+        alert("Por favor, ingresa todos los campos correctamente.");
+        return;
+      }
+
+      // Crear nuevo producto o materia prima
       const newItem = {
         name,
         price,
@@ -94,16 +104,26 @@
         image: image ? URL.createObjectURL(image) : null
       };
 
+      // Agregar al tipo correspondiente (producto o materia prima)
       if (type === 'product') {
         inventory.products.push(newItem);
       } else {
         inventory.rawMaterials.push(newItem);
       }
 
-      // Guardar inventario en localStorage
+      // Guardar el inventario en localStorage
       localStorage.setItem('inventory', JSON.stringify(inventory));
-      renderInventory();
+      renderInventory();  // Volver a renderizar el inventario actualizado
+
+      // Limpiar el formulario
+      document.getElementById('add-item-form').reset();
     });
+
+    // Cargar inventario al cargar la página
+    renderInventory();
+  </script>
+</body>
+</html>
 
     // Cargar inventario al cargar la página
     renderInventory();
