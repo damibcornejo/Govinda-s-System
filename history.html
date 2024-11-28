@@ -3,60 +3,60 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Historial - Govinda's</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      background-color: #f4f4f4;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 20px;
-    }
-    h1 {
-      margin-bottom: 20px;
-    }
-    ul {
-      list-style: none;
-      padding: 0;
-      width: 100%;
-      max-width: 600px;
-    }
-    li {
-      background: white;
-      padding: 15px;
-      margin: 10px 0;
-      border-radius: 5px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    }
-  </style>
+  <title>Historial de Pedidos - Govinda's</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <header>
-  <h1>Historial</h1>
-  <nav>
-    <a href="index.html" class="menu-link">Volver al Menú</a>
-  </nav>
-</header>
+    <h1>Historial de Pedidos</h1>
+    <nav>
+      <a href="index.html" class="menu-link">Volver al Menú</a>
+    </nav>
+  </header>
 
-  <h1>Historial de Pedidos</h1>
-  <ul id="history-list"></ul>
+  <main>
+    <section>
+      <h2>Pedidos Anteriores</h2>
+      <ul id="order-history-list"></ul>
+    </section>
+  </main>
 
   <script>
-    const ordersHistory = JSON.parse(localStorage.getItem('orders')) || [];
+    // Cargar el historial de pedidos desde localStorage
+    const orderHistory = JSON.parse(localStorage.getItem('orderHistory')) || [];
 
-    function renderHistory() {
-      const historyList = document.getElementById('history-list');
-      historyList.innerHTML = '';
-      ordersHistory.forEach(order => {
+    // Función para mostrar el historial de pedidos
+    function renderOrderHistory() {
+      const orderHistoryList = document.getElementById('order-history-list');
+
+      if (orderHistory.length === 0) {
+        orderHistoryList.innerHTML = '<p>No hay pedidos previos.</p>';
+        return;
+      }
+
+      orderHistory.forEach(order => {
+        const orderDate = new Date(order.orderDate); // Crear un objeto Date con la fecha y hora
+        const orderDateFormatted = orderDate.toLocaleString(); // Fecha y hora en formato legible
+
         const li = document.createElement('li');
-        li.textContent = `${order.name} - Cantidad: ${order.quantity}`;
-        historyList.appendChild(li);
+        li.innerHTML = `
+          <h3>Pedido ID: ${order.orderId}</h3>
+          <p><strong>Fecha y Hora:</strong> ${orderDateFormatted}</p>
+          <p><strong>Total:</strong> $${order.totalPrice}</p>
+          <h4>Productos:</h4>
+          <ul>
+            ${order.orderItems.map(item => `
+              <li>${item.product} x${item.quantity} - $${item.unitPrice} c/u - Total: $${item.totalPrice}</li>
+            `).join('')}
+          </ul>
+        `;
+        orderHistoryList.appendChild(li);
       });
     }
 
-    renderHistory();
+    // Llamar a la función para renderizar el historial de pedidos
+    renderOrderHistory();
   </script>
 </body>
 </html>
+
