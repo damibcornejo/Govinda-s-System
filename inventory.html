@@ -43,9 +43,11 @@
   </main>
 
   <script>
+    console.log(localStorage.getItem('inventory'));
     // Cargar inventario desde localStorage, si no hay, inicializa vacío
     let inventory = JSON.parse(localStorage.getItem('inventory')) || { products: [], rawMaterials: [] };
-
+    console.log(inventory);
+    
     // Función para renderizar los productos en el inventario
     function renderInventory() {
       const productList = document.getElementById('product-list');
