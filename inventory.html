@@ -10,7 +10,7 @@
   <header>
     <h1>Inventario</h1>
     <nav>
-      <a href="menu.html" class="menu-link">Volver al Menú</a>
+      <a href="index.html" class="menu-link">Volver al Menú</a>
       <a href="orders.html" class="menu-link">Pedidos</a>
     </nav>
   </header>
@@ -113,17 +113,13 @@
 
       // Guardar el inventario en localStorage
       localStorage.setItem('inventory', JSON.stringify(inventory));
-      renderInventory();  // Volver a renderizar el inventario actualizado
+
+      // Actualizar la vista del inventario
+      renderInventory();
 
       // Limpiar el formulario
       document.getElementById('add-item-form').reset();
     });
-
-    // Cargar inventario al cargar la página
-    renderInventory();
-  </script>
-</body>
-</html>
 
     // Cargar inventario al cargar la página
     renderInventory();
