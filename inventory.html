@@ -44,77 +44,86 @@
   </main>
 
   <script>
-    // Cargar inventario desde localStorage, si no hay, inicializa vacío
-    let inventory = JSON.parse(localStorage.getItem('inventory')) || { products: [], rawMaterials: [] };
+    // Cargar inventario desde localStorage
+let storedInventory = JSON.parse(localStorage.getItem('inventory'));
+let inventory = storedInventory && typeof storedInventory === 'object' 
+  && Array.isArray(storedInventory.products) 
+  && Array.isArray(storedInventory.rawMaterials) 
+  ? storedInventory 
+  : { products: [], rawMaterials: [] };
 
-    // Función para renderizar los productos en el inventario
-    function renderInventory() {
-      const productList = document.getElementById('product-list');
-      const rawMaterialList = document.getElementById('raw-material-list');
-      const productCount = document.getElementById('product-count');
-      const rawMaterialCount = document.getElementById('raw-material-count');
+// Función para renderizar el inventario
+function renderInventory() {
+  const productList = document.getElementById('product-list');
+  const rawMaterialList = document.getElementById('raw-material-list');
+  const productCount = document.getElementById('product-count');
+  const rawMaterialCount = document.getElementById('raw-material-count');
 
-      // Limpiar las listas antes de renderizar
-      productList.innerHTML = '';
-      rawMaterialList.innerHTML = '';
+  productList.innerHTML = '';
+  rawMaterialList.innerHTML = '';
 
-      // Verificar que inventory.products es un array
-      if (Array.isArray(inventory.products)) {
-        inventory.products.forEach(item => {
-          const li = document.createElement('li');
-          li.innerHTML = `<p><strong>${item.name}</strong></p>
-                          <p>Precio: $${item.price}</p>
-                          <p>Cantidad: ${item.quantity}</p>`;
-          productList.appendChild(li);
-        });
-      }
+  inventory.products.forEach(item => {
+    const li = document.createElement('li');
+    li.innerHTML = `
+      <p><strong>${item.name}</strong></p>
+      <p>Precio: $${item.price}</p>
+      <p>Cantidad: ${item.quantity}</p>
+      ${item.image ? `<img src="${item.image}" alt="${item.name}" style="max-width: 100px; max-height: 100px;">` : ''}
+    `;
+    productList.appendChild(li);
+  });
 
-      // Verificar que inventory.rawMaterials es un array
-      if (Array.isArray(inventory.rawMaterials)) {
-        inventory.rawMaterials.forEach(item => {
-          const li = document.createElement('li');
-          li.innerHTML = `<p><strong>${item.name}</strong></p>
-                          <p>Precio: $${item.price}</p>
-                          <p>Cantidad: ${item.quantity}</p>`;
-          rawMaterialList.appendChild(li);
-        });
-      }
+  inventory.rawMaterials.forEach(item => {
+    const li = document.createElement('li');
+    li.innerHTML = `
+      <p><strong>${item.name}</strong></p>
+      <p>Precio: $${item.price}</p>
+      <p>Cantidad: ${item.quantity}</p>
+      ${item.image ? `<img src="${item.image}" alt="${item.name}" style="max-width: 100px; max-height: 100px;">` : ''}
+    `;
+    rawMaterialList.appendChild(li);
+  });
 
-      // Actualizar los contadores de productos y materias primas
-      productCount.textContent = inventory.products.length;
-      rawMaterialCount.textContent = inventory.rawMaterials.length;
-    }
+  productCount.textContent = inventory.products.length;
+  rawMaterialCount.textContent = inventory.rawMaterials.length;
+}
 
-    // Manejar el formulario de agregar producto o materia prima
-    document.getElementById('add-item-form').addEventListener('submit', function(event) {
-      event.preventDefault();
+// Manejo del formulario
+document.getElementById('add-item-form').addEventListener('submit', function(event) {
+  event.preventDefault();
 
-      const name = document.getElementById('item-name').value;
-      const price = parseFloat(document.getElementById('item-price').value);
-      const quantity = parseInt(document.getElementById('item-quantity').value);
-      const type = document.getElementById('item-type').value;
-      const image = document.getElementById('item-image').files[0];
+  const name = document.getElementById('item-name').value;
+  const price = parseFloat(document.getElementById('item-price').value);
+  const quantity = parseInt(document.getElementById('item-quantity').value);
+  const type = document.getElementById('item-type').value;
+  const image = document.getElementById('item-image').files[0];
+  const imageURL = image ? URL.createObjectURL(image) : null;
 
-      // Validación de datos
-      if (!name || isNaN(price) || isNaN(quantity) || quantity <= 0) {
-        alert("Por favor, ingresa todos los campos correctamente.");
-        return;
-      }
+  if (!name || isNaN(price) || price <= 0 || isNaN(quantity) || quantity <= 0) {
+    alert("Por favor, completa todos los campos correctamente.");
+    return;
+  }
 
-      // Crear nuevo producto o materia prima
-      const newItem = {
-        name,
-        price,
-        quantity,
-        image: image ? URL.createObjectURL(image) : null
-      };
+  const newItem = { name, price, quantity, image: imageURL };
 
-      // Agregar al tipo correspondiente (producto o materia prima)
-      if (type === 'product') {
-        inventory.products.push(newItem);
-      } else {
-        inventory.rawMaterials.push(newItem);
-      }
+  if (type === 'product') {
+    inventory.products.push(newItem);
+  } else {
+    inventory.rawMaterials.push(newItem);
+  }
+
+  try {
+    localStorage.setItem('inventory', JSON.stringify(inventory));
+    renderInventory();
+    document.getElementById('add-item-form').reset();
+  } catch (error) {
+    console.error("Error al guardar en localStorage:", error);
+    alert("Ocurrió un error al guardar los datos.");
+  }
+});
+
+// Inicializar renderizado
+renderInventory();
 
       // Guardar el inventario en localStorage
       localStorage.setItem('inventory', JSON.stringify(inventory));
