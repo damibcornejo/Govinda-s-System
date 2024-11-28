@@ -10,7 +10,7 @@
   <header>
     <h1>Pedidos</h1>
     <nav>
-      <a href="index.html" class="menu-link">Volver al Menú</a>
+      <a href="menu.html" class="menu-link">Volver al Menú</a>
     </nav>
   </header>
 
@@ -73,5 +73,37 @@
 
     // Mostrar el resumen del pedido
     function renderOrderSummary() {
-      const orderSummary = document.getElementById
+      const orderSummary = document.getElementById('order-summary');
+      const totalPriceElement = document.getElementById('total-price');
+      orderSummary.innerHTML = '';
+      let total = 0;
 
+      orderItems.forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = `${item.product} x${item.quantity} - $${item.unitPrice} c/u - Total: $${item.totalPrice}`;
+        orderSummary.appendChild(li);
+        total += item.totalPrice;
+      });
+
+      totalPriceElement.textContent = total.toFixed(2);
+    }
+
+    // Guardar el pedido en el historial
+    function placeOrder() {
+      const orderDate = new Date().toLocaleString();
+      const orderId = 'ORD' + Date.now();
+
+      const orderHistory = JSON.parse(localStorage.getItem('orderHistory')) || [];
+      orderHistory.push({ orderId, orderItems, orderDate, totalPrice: parseFloat(document.getElementById('total-price').textContent) });
+
+      localStorage.setItem('orderHistory', JSON.stringify(orderHistory));
+      alert('Pedido realizado con éxito');
+      orderItems = [];
+      renderOrderSummary();
+    }
+
+    // Llamar a la función para llenar el desplegable con los productos
+    populateProductSelect();
+  </script>
+</body>
+</html>
