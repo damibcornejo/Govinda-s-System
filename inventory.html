@@ -1,8 +1,9 @@
 <!DOCTYPE html>
+<html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nombre de la página</title>
+  <title>Inventario - Govinda's</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -10,98 +11,102 @@
     <h1>Inventario</h1>
     <nav>
       <a href="index.html" class="menu-link">Volver al Menú</a>
+      <a href="orders.html" class="menu-link">Pedidos</a>
     </nav>
   </header>
+
   <main>
     <section>
       <h2>Productos</h2>
-      <form id="products-form" class="inventory-form">
-        <input type="text" id="product-name" placeholder="Nombre del producto" required>
-        <input type="number" id="product-quantity" placeholder="Cantidad" required>
-        <input type="number" id="product-price" placeholder="Precio" required>
-        <button type="button" onclick="addInventoryItem('products')">Agregar Producto</button>
-      </form>
-      <ul id="products-list" class="inventory-list"></ul>
-    </section>
+      <div class="inventory-summary">
+        <h3>Resumen de Inventario</h3>
+        <p>Total de productos: <span id="product-count">0</span></p>
+        <p>Total de materias primas: <span id="raw-material-count">0</span></p>
+      </div>
+      <ul class="inventory-list" id="product-list"></ul>
 
-    <section>
       <h2>Materias Primas</h2>
-      <form id="raw-materials-form" class="inventory-form">
-        <input type="text" id="material-name" placeholder="Nombre de la materia prima" required>
-        <input type="number" id="material-quantity" placeholder="Cantidad" required>
-        <button type="button" onclick="addInventoryItem('rawMaterials')">Agregar Materia Prima</button>
+      <ul class="raw-material-list" id="raw-material-list"></ul>
+
+      <h2>Agregar Producto/Materia Prima</h2>
+      <form class="inventory-form" id="add-item-form">
+        <input type="text" id="item-name" placeholder="Nombre del producto" required>
+        <input type="number" id="item-price" placeholder="Precio unitario" required>
+        <input type="number" id="item-quantity" placeholder="Cantidad" required>
+        <select id="item-type" required>
+          <option value="product">Producto</option>
+          <option value="rawMaterial">Materia Prima</option>
+        </select>
+        <input type="file" id="item-image">
+        <button type="submit">Agregar al Inventario</button>
       </form>
-      <ul id="raw-materials-list" class="inventory-list"></ul>
     </section>
   </main>
 
   <script>
+    // Cargar inventario desde localStorage
     let inventory = JSON.parse(localStorage.getItem('inventory')) || { products: [], rawMaterials: [] };
 
-    function renderInventory(type) {
-      const listId = type === 'products' ? 'products-list' : 'raw-materials-list';
-      const listElement = document.getElementById(listId);
-      listElement.innerHTML = '';
+    // Función para renderizar los productos en el inventario
+    function renderInventory() {
+      const productList = document.getElementById('product-list');
+      const rawMaterialList = document.getElementById('raw-material-list');
+      const productCount = document.getElementById('product-count');
+      const rawMaterialCount = document.getElementById('raw-material-count');
 
-      inventory[type].forEach((item, index) => {
+      // Limpiar las listas antes de renderizar
+      productList.innerHTML = '';
+      rawMaterialList.innerHTML = '';
+
+      inventory.products.forEach(item => {
         const li = document.createElement('li');
-        li.innerHTML = `
-          <p><strong>${item.name}</strong> - Cantidad: ${item.quantity} - Precio: ${item.price || 'N/A'}</p>
-          <button onclick="editInventoryItem('${type}', ${index})">Editar</button>
-          <button onclick="deleteInventoryItem('${type}', ${index})">Eliminar</button>
-        `;
-        listElement.appendChild(li);
+        li.innerHTML = `<p><strong>${item.name}</strong></p>
+                        <p>Precio: $${item.price}</p>
+                        <p>Cantidad: ${item.quantity}</p>`;
+        productList.appendChild(li);
       });
+
+      inventory.rawMaterials.forEach(item => {
+        const li = document.createElement('li');
+        li.innerHTML = `<p><strong>${item.name}</strong></p>
+                        <p>Precio: $${item.price}</p>
+                        <p>Cantidad: ${item.quantity}</p>`;
+        rawMaterialList.appendChild(li);
+      });
+
+      productCount.textContent = inventory.products.length;
+      rawMaterialCount.textContent = inventory.rawMaterials.length;
     }
 
-    function addInventoryItem(type) {
-      const nameInput = type === 'products' ? 'product-name' : 'material-name';
-      const quantityInput = type === 'products' ? 'product-quantity' : 'material-quantity';
-      const priceInput = type === 'products' ? 'product-price' : null;
+    // Manejar el formulario de agregar producto o materia prima
+    document.getElementById('add-item-form').addEventListener('submit', function(event) {
+      event.preventDefault();
+      const name = document.getElementById('item-name').value;
+      const price = parseFloat(document.getElementById('item-price').value);
+      const quantity = parseInt(document.getElementById('item-quantity').value);
+      const type = document.getElementById('item-type').value;
+      const image = document.getElementById('item-image').files[0];
 
-      const name = document.getElementById(nameInput).value;
-      const quantity = parseInt(document.getElementById(quantityInput).value, 10);
-      const price = priceInput ? parseFloat(document.getElementById(priceInput).value) : null;
+      const newItem = {
+        name,
+        price,
+        quantity,
+        image: image ? URL.createObjectURL(image) : null
+      };
 
-      if (!name || isNaN(quantity)) {
-        alert('Por favor, completa todos los campos correctamente.');
-        return;
+      if (type === 'product') {
+        inventory.products.push(newItem);
+      } else {
+        inventory.rawMaterials.push(newItem);
       }
 
-      inventory[type].push({ name, quantity, price });
-      saveInventory();
-      renderInventory(type);
-
-      document.getElementById(nameInput).value = '';
-      document.getElementById(quantityInput).value = '';
-      if (priceInput) document.getElementById(priceInput).value = '';
-    }
-
-    function editInventoryItem(type, index) {
-      const newName = prompt('Nuevo nombre:', inventory[type][index].name);
-      const newQuantity = prompt('Nueva cantidad:', inventory[type][index].quantity);
-      const newPrice = type === 'products' ? prompt('Nuevo precio:', inventory[type][index].price) : null;
-
-      if (newName) inventory[type][index].name = newName;
-      if (newQuantity) inventory[type][index].quantity = parseInt(newQuantity, 10);
-      if (newPrice && type === 'products') inventory[type][index].price = parseFloat(newPrice);
-
-      saveInventory();
-      renderInventory(type);
-    }
-
-    function deleteInventoryItem(type, index) {
-      inventory[type].splice(index, 1);
-      saveInventory();
-      renderInventory(type);
-    }
-
-    function saveInventory() {
+      // Guardar inventario en localStorage
       localStorage.setItem('inventory', JSON.stringify(inventory));
-    }
+      renderInventory();
+    });
 
-    renderInventory('products');
-    renderInventory('rawMaterials');
+    // Cargar inventario al cargar la página
+    renderInventory();
   </script>
 </body>
 </html>
