@@ -10,7 +10,8 @@
   <header>
     <h1>Inventario</h1>
     <nav>
-      <a href="index.html" class="menu-link">Volver al Menú</a>
+      <a href="menu.html" class="menu-link">Volver al Menú</a>
+      <a href="orders.html" class="menu-link">Pedidos</a>
     </nav>
   </header>
 
@@ -43,16 +44,9 @@
   </main>
 
   <script>
-    console.log(localStorage.getItem('inventory'));
     // Cargar inventario desde localStorage, si no hay, inicializa vacío
     let inventory = JSON.parse(localStorage.getItem('inventory')) || { products: [], rawMaterials: [] };
-    console.log(inventory);
-    if(!inventory){
-      inventory={products: [], rawMaterials: [] };
-    }else{
-      inventory.products=inventory.products || [];
-      inventory.rawMaterials=inventory.rawMaterials || [];
-    
+
     // Función para renderizar los productos en el inventario
     function renderInventory() {
       const productList = document.getElementById('product-list');
@@ -63,37 +57,38 @@
       // Limpiar las listas antes de renderizar
       productList.innerHTML = '';
       rawMaterialList.innerHTML = '';
-       // Verificar si `products` es un array y si no está vacío
-  if (Array.isArray(inventory.products)) {
-    inventory.products.forEach(item => {
-      const li = document.createElement('li');
-      li.innerHTML = `<p><strong>${item.name}</strong></p>
-                      <p>Precio: $${item.price}</p>
-                      <p>Cantidad: ${item.quantity}</p>`;
-      productList.appendChild(li);
-    });
-  }
 
-  // Verificar si `rawMaterials` es un array y si no está vacío
-  if (Array.isArray(inventory.rawMaterials)) {
-    inventory.rawMaterials.forEach(item => {
-      const li = document.createElement('li');
-      li.innerHTML = `<p><strong>${item.name}</strong></p>
-                      <p>Precio: $${item.price}</p>
-                      <p>Cantidad: ${item.quantity}</p>`;
-      rawMaterialList.appendChild(li);
-    });
-  }
+      // Verificar que inventory.products es un array
+      if (Array.isArray(inventory.products)) {
+        inventory.products.forEach(item => {
+          const li = document.createElement('li');
+          li.innerHTML = `<p><strong>${item.name}</strong></p>
+                          <p>Precio: $${item.price}</p>
+                          <p>Cantidad: ${item.quantity}</p>`;
+          productList.appendChild(li);
+        });
+      }
 
-  // Actualizar los contadores de productos y materias primas
-  productCount.textContent = inventory.products.length;
-  rawMaterialCount.textContent = inventory.rawMaterials.length;
-}
-     
+      // Verificar que inventory.rawMaterials es un array
+      if (Array.isArray(inventory.rawMaterials)) {
+        inventory.rawMaterials.forEach(item => {
+          const li = document.createElement('li');
+          li.innerHTML = `<p><strong>${item.name}</strong></p>
+                          <p>Precio: $${item.price}</p>
+                          <p>Cantidad: ${item.quantity}</p>`;
+          rawMaterialList.appendChild(li);
+        });
+      }
+
+      // Actualizar los contadores de productos y materias primas
+      productCount.textContent = inventory.products.length;
+      rawMaterialCount.textContent = inventory.rawMaterials.length;
+    }
 
     // Manejar el formulario de agregar producto o materia prima
     document.getElementById('add-item-form').addEventListener('submit', function(event) {
       event.preventDefault();
+
       const name = document.getElementById('item-name').value;
       const price = parseFloat(document.getElementById('item-price').value);
       const quantity = parseInt(document.getElementById('item-quantity').value);
@@ -123,7 +118,6 @@
 
       // Guardar el inventario en localStorage
       localStorage.setItem('inventory', JSON.stringify(inventory));
-      console.log('inventario guardad',inventory);
 
       // Actualizar la vista del inventario
       renderInventory();
@@ -132,8 +126,4 @@
       document.getElementById('add-item-form').reset();
     });
 
-    // Cargar inventario al cargar la página
-    renderInventory();
-  </script>
-</body>
-</html>
+    // Llamar a la función para renderizar el inventario cuando la página se cargue
