@@ -9,59 +9,95 @@
 <body>
   <header>
     <h1>Pedidos</h1>
+    <nav>
+      <a href="index.html" class="menu-link">Volver al Menú</a>
+    </nav>
   </header>
   <main>
-    <form id="order-form" class="inventory-form">
-      <input type="text" id="order-name" placeholder="Nombre del pedido" required>
-      <input type="number" id="order-quantity" placeholder="Cantidad" required>
-      <button type="button" onclick="addOrder()">Agregar Pedido</button>
-    </form>
-    <ul id="order-list" class="inventory-list"></ul>
+    <section>
+      <h2>Formulario de Pedido</h2>
+      <form id="order-form">
+        <label for="product-select">Selecciona un Producto:</label>
+        <select id="product-select" required>
+          <option value="">Elige un producto</option>
+        </select>
+        <label for="quantity">Cantidad:</label>
+        <input type="number" id="quantity" required>
+        <button type="submit">Agregar al Pedido</button>
+      </form>
+    </section>
+
+    <section>
+      <h2>Resumen del Pedido</h2>
+      <ul id="order-summary"></ul>
+      <p><strong>Total:</strong> <span id="total-price">0</span></p>
+      <button onclick="placeOrder()">Realizar Pedido</button>
+    </section>
   </main>
 
   <script>
-    let orders = JSON.parse(localStorage.getItem('orders')) || [];
+    let inventory = JSON.parse(localStorage.getItem('inventory')) || { products: [], rawMaterials: [] };
+    let orderItems = [];
 
-    function renderOrders() {
-      const orderList = document.getElementById('order-list');
-      orderList.innerHTML = '';
-      orders.forEach((order, index) => {
-        const li = document.createElement('li');
-        li.innerHTML = `
-          <p><strong>${order.name}</strong> - Cantidad: ${order.quantity} - Fecha: ${order.date}</p>
-          <button onclick="deleteOrder(${index})">Eliminar</button>
-        `;
-        orderList.appendChild(li);
+    function populateProductSelect() {
+      const productSelect = document.getElementById('product-select');
+      inventory.products.forEach((item, index) => {
+        const option = document.createElement('option');
+        option.value = index;
+        option.textContent = item.name;
+        productSelect.appendChild(option);
       });
     }
 
-    function addOrder() {
-      const name = document.getElementById('order-name').value;
-      const quantity = parseInt(document.getElementById('order-quantity').value, 10);
-      const date = new Date().toLocaleString();
+    document.getElementById('order-form').addEventListener('submit', function(event) {
+      event.preventDefault();
+      const selectedProductIndex = document.getElementById('product-select').value;
+      const quantity = parseInt(document.getElementById('quantity').value);
 
-      if (!name || isNaN(quantity)) {
-        alert('Por favor, completa todos los campos correctamente.');
+      if (selectedProductIndex === "" || isNaN(quantity) || quantity <= 0) {
+        alert("Por favor, selecciona un producto y cantidad válidos.");
         return;
       }
 
-      orders.push({ name, quantity, date });
-      saveOrders();
-      renderOrders();
-      document.getElementById('order-form').reset();
+      const product = inventory.products[selectedProductIndex];
+      const totalPrice = product.price * quantity;
+
+      orderItems.push({ product: product.name, quantity, totalPrice, unitPrice: product.price });
+
+      renderOrderSummary();
+    });
+
+    function renderOrderSummary() {
+      const orderSummary = document.getElementById('order-summary');
+      const totalPriceElement = document.getElementById('total-price');
+      orderSummary.innerHTML = '';
+      let total = 0;
+
+      orderItems.forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = `${item.product} x${item.quantity} - $${item.unitPrice} c/u - Total: $${item.totalPrice}`;
+        orderSummary.appendChild(li);
+        total += item.totalPrice;
+      });
+
+      totalPriceElement.textContent = total.toFixed(2);
     }
 
-    function deleteOrder(index) {
-      orders.splice(index, 1);
-      saveOrders();
-      renderOrders();
+    function placeOrder() {
+      const orderDate = new Date().toLocaleString();
+      const orderId = 'ORD' + Date.now();
+
+      const orderHistory = JSON.parse(localStorage.getItem('orderHistory')) || [];
+      orderHistory.push({ orderId, orderItems, orderDate, totalPrice: parseFloat(document.getElementById('total-price').textContent) });
+
+      localStorage.setItem('orderHistory', JSON.stringify(orderHistory));
+      alert('Pedido realizado con éxito');
+      orderItems = [];
+      renderOrderSummary();
     }
 
-    function saveOrders() {
-      localStorage.setItem('orders', JSON.stringify(orders));
-    }
-
-    renderOrders();
+    // Llamar a la función para llenar el desplegable de productos
+    populateProductSelect();
   </script>
 </body>
 </html>
