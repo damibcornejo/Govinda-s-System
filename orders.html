@@ -4,52 +4,20 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pedidos - Govinda's</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      background-color: #f4f4f4;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 20px;
-    }
-    h1 {
-      margin-bottom: 20px;
-    }
-    .order-form input,
-    .order-form button {
-      margin: 10px 0;
-      padding: 10px;
-      width: 100%;
-      box-sizing: border-box;
-    }
-    ul {
-      list-style: none;
-      padding: 0;
-    }
-    button {
-      background-color: #6ab04c;
-      color: white;
-      border: none;
-      padding: 10px 15px;
-      cursor: pointer;
-      border-radius: 5px;
-      margin: 5px;
-    }
-    button:hover {
-      background-color: #58a043;
-    }
-  </style>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <h1>Gestión de Pedidos</h1>
-  <form id="order-form" class="order-form">
-    <input type="text" id="order-name" placeholder="Nombre del pedido" required>
-    <input type="number" id="order-quantity" placeholder="Cantidad" required>
-    <button type="button" onclick="addOrder()">Agregar Pedido</button>
-  </form>
-  <ul id="order-list"></ul>
+  <header>
+    <h1>Pedidos</h1>
+  </header>
+  <main>
+    <form id="order-form" class="inventory-form">
+      <input type="text" id="order-name" placeholder="Nombre del pedido" required>
+      <input type="number" id="order-quantity" placeholder="Cantidad" required>
+      <button type="button" onclick="addOrder()">Agregar Pedido</button>
+    </form>
+    <ul id="order-list" class="inventory-list"></ul>
+  </main>
 
   <script>
     let orders = JSON.parse(localStorage.getItem('orders')) || [];
@@ -60,7 +28,7 @@
       orders.forEach((order, index) => {
         const li = document.createElement('li');
         li.innerHTML = `
-          <p><strong>${order.name}</strong> - Cantidad: ${order.quantity}</p>
+          <p><strong>${order.name}</strong> - Cantidad: ${order.quantity} - Fecha: ${order.date}</p>
           <button onclick="deleteOrder(${index})">Eliminar</button>
         `;
         orderList.appendChild(li);
@@ -70,13 +38,14 @@
     function addOrder() {
       const name = document.getElementById('order-name').value;
       const quantity = parseInt(document.getElementById('order-quantity').value, 10);
+      const date = new Date().toLocaleString();
 
       if (!name || isNaN(quantity)) {
         alert('Por favor, completa todos los campos correctamente.');
         return;
       }
 
-      orders.push({ name, quantity });
+      orders.push({ name, quantity, date });
       saveOrders();
       renderOrders();
       document.getElementById('order-form').reset();
