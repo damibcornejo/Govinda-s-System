@@ -16,6 +16,7 @@
       <form id="login-form">
         <label for="user-type">Perfil:</label>
         <select id="user-type" required>
+          <option value="">Seleccione un perfil</option>
           <option value="admin">Administrador</option>
           <option value="seller">Vendedor</option>
         </select>
@@ -29,47 +30,51 @@
   </main>
 
   <script>
-  const loginForm = document.getElementById('login-form');
-  const userTypeSelect = document.getElementById('user-type');
-  const passwordField = document.getElementById('password-field');
-  const passwordInput = document.getElementById('admin-password');
-  const passwordLabel = document.getElementById('password-label');
+    const loginForm = document.getElementById('login-form');
+    const userTypeSelect = document.getElementById('user-type');
+    const passwordField = document.getElementById('password-field');
+    const passwordInput = document.getElementById('admin-password');
+    const passwordLabel = document.getElementById('password-label');
 
-  let adminPassword = localStorage.getItem('adminPassword');
+    let adminPassword = localStorage.getItem('adminPassword');
 
-  userTypeSelect.addEventListener('change', function() {
-    if (userTypeSelect.value === 'admin') {
-      passwordField.style.display = 'block';
-      passwordLabel.textContent = adminPassword
-        ? 'Contraseña:'
-        : 'Cree una contraseña:';
-    } else {
-      passwordField.style.display = 'none';
-    }
-  });
-
-  loginForm.addEventListener('submit', function(event) {
-    event.preventDefault();
-    const userType = userTypeSelect.value;
-
-    if (userType === 'admin') {
-      const enteredPassword = passwordInput.value;
-      if (!adminPassword) {
-        localStorage.setItem('adminPassword', enteredPassword);
-        alert('Contraseña creada exitosamente.');
-        localStorage.setItem('userType', 'admin'); // Guardar sesión activa
-        window.location.href = 'inventory.html';
-      } else if (enteredPassword === adminPassword) {
-        localStorage.setItem('userType', 'admin'); // Guardar sesión activa
-        window.location.href = 'inventory.html';
+    // Mostrar u ocultar el campo de contraseña según el tipo de usuario seleccionado
+    userTypeSelect.addEventListener('change', function() {
+      if (userTypeSelect.value === 'admin') {
+        passwordField.style.display = 'block';
+        passwordLabel.textContent = adminPassword
+          ? 'Contraseña:'
+          : 'Cree una contraseña:';
       } else {
-        alert('Contraseña incorrecta.');
+        passwordField.style.display = 'none';
       }
-    } else if (userType === 'seller') {
-      localStorage.setItem('userType', 'seller'); // Guardar sesión activa
-      window.location.href = 'sales.html';
-    }
-  });
-</script>
+    });
+
+    // Manejo del formulario de inicio de sesión
+    loginForm.addEventListener('submit', function(event) {
+      event.preventDefault();
+      const userType = userTypeSelect.value;
+
+      if (userType === 'admin') {
+        const enteredPassword = passwordInput.value;
+        if (!adminPassword) {
+          localStorage.setItem('adminPassword', enteredPassword);
+          alert('Contraseña creada exitosamente.');
+          localStorage.setItem('userType', 'admin'); // Guardar sesión activa
+          window.location.href = 'menu.html';
+        } else if (enteredPassword === adminPassword) {
+          localStorage.setItem('userType', 'admin'); // Guardar sesión activa
+          window.location.href = 'menu.html';
+        } else {
+          alert('Contraseña incorrecta.');
+        }
+      } else if (userType === 'seller') {
+        localStorage.setItem('userType', 'seller'); // Guardar sesión activa
+        window.location.href = 'menu.html';
+      } else {
+        alert('Seleccione un perfil para continuar.');
+      }
+    });
+  </script>
 </body>
 </html>
