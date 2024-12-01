@@ -9,7 +9,7 @@
 body {
   font-family: Arial, sans-serif;
   background-color: #f4f4f4;
-  color: #ffffff ;
+  color: #000000 ;
   line-height: 1.6;
 }
 
@@ -21,7 +21,7 @@ header {
 }
 
 h1, h2 {
-  color: #2c3e50;
+  color: #ffffff;
 }
 
 /* Sección del inventario y materia prima */
