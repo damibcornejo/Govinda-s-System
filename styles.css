@@ -4,53 +4,66 @@
   padding: 0;
   box-sizing: border-box;
 }
+
 /* Estilo global para el body */
 body {
-  font-family: Arial, sans-serif; /* Fuente predeterminada */
-  margin: 0;
-  padding: 0;
-  background-color: #f4f4f4; /* Fondo claro para toda la página */
-  display: flex;
-  justify-content: center; /* Centra horizontalmente todo el contenido */
-  align-items: center; /* Centra verticalmente el contenido */
-  flex-direction: column; /* Organiza los elementos en columna */
-  min-height: 100vh; /* Asegura que el contenido ocupe al menos el 100% de la altura de la ventana */
+  font-family: 'Roboto', sans-serif;
+  background: linear-gradient(135deg, #f4f4f4, #d6e4f0);
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  justify-items: center;
+  min-height: 100vh;
 }
 
 /* Cabecera de la página */
 header {
-  background-color: #787E81; /* Gris */
+  background-color: #787E81;
   color: white;
   text-align: center;
   padding: 20px;
   width: 100%;
-  position: fixed; /* Hace que el encabezado esté fijo en la parte superior */
+  position: fixed;
   top: 0;
   left: 0;
-  z-index: 10; /* Asegura que el encabezado se quede por encima del contenido */
+  z-index: 10;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-h1 {
+header h1 {
   margin: 0;
 }
 
-/* Estilo para los menús de opciones */
+/* Contenedor principal */
+main {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-top: 100px; /* Separar del header */
+}
+
+/* Estilo para los menús */
 .menu {
   margin: 20px;
   padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
-  width: 300px;
-  background-color: #fff; /* Fondo blanco */
+  border-radius: 12px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  width: 320px;
+  background-color: #fff;
+  transition: transform 0.2s ease;
+}
+
+.menu:hover {
+  transform: translateY(-10px); /* Eleva al pasar el mouse */
 }
 
 /* Estilo específico para el menú del Administrador */
 #admin-menu {
-  background-color: #ff6347; /* Rojo tomate */
+  background-color: #2B647F; /* Azul oscuro */
 }
 
 #admin-menu h2 {
   text-align: center;
+  color: white;
 }
 
 #admin-menu ul {
@@ -74,16 +87,18 @@ h1 {
 }
 
 #admin-menu ul li a:hover {
-  background-color: #ff4500; /* Naranja oscuro */
+  background-color: #1793CE; /* Azul claro */
+  color: white;
 }
 
 /* Estilo específico para el menú del Vendedor */
 #seller-menu {
-  background-color: #008CBA; /* Azul */
+  background-color: #56922B; /* Verde claro */
 }
 
 #seller-menu h2 {
   text-align: center;
+  color: white;
 }
 
 #seller-menu ul {
@@ -107,45 +122,15 @@ h1 {
 }
 
 #seller-menu ul li a:hover {
-  background-color: #005f7a; /* Azul más oscuro */
-}
-
-/* Estilo para el botón de Cerrar Sesión */
-.logout-btn {
-  background-color: #787E81; /* Gris */
+  background-color: #66C91F; /* Verde claro */
   color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 8px;
-  font-size: 14px; /* Tamaño de fuente */
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
-  display: block;
-  margin: 20px auto; /* Esto asegura que el botón esté centrado */
 }
 
-.logout-btn:hover {
-  background-color: #787E81; /* Gris */
-}
-
-/* Asegurar que todos los enlaces dentro del menú tengan un buen diseño */
-nav ul li a {
-  display: inline-block;
-  padding: 10px 20px;
-  text-decoration: none;
-  border-radius: 5px;
-  color: #fff;
+/* Estilo para el pie de página */
+footer {
+  background-color: #333;
+  color: white;
   text-align: center;
-  font-size: 16px;
-  width: 100%; /* Hace que el enlace ocupe todo el ancho disponible */
+  padding: 10px;
+  width: 100%;
 }
-
-nav ul li a:hover {
-  background-color: #ddd;
-}
-
-
- 
-
-
