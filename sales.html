@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ventas</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <h1>Gestión de Ventas</h1>
+    <nav>
+      <a href="login.html">Cerrar Sesión</a>
+    </nav>
+  </header>
+  <main>
+    <section>
+      <h2>Productos para Venta</h2>
+      <ul id="sales-stock"></ul>
+      <form id="add-sale-form">
+        <input type="text" id="sale-name" placeholder="Nombre del producto" required>
+        <input type="number" id="sale-quantity" placeholder="Cantidad" required>
+        <button type="submit">Agregar Venta</button>
+      </form>
+    </section>
+  </main>
+
+  <script>
+    let salesStock = JSON.parse(localStorage.getItem('salesStock')) || [];
+    let salesHistory = JSON.parse(localStorage.getItem('salesHistory')) || [];
+
+    function renderSalesStock() {
+      const salesList = document.getElementById('sales-stock');
+      salesList.innerHTML = '';
+      salesStock.forEach((item, index) => {
+        const li = document.createElement('li');
+        li.innerHTML = `${item.name} - ${item.quantity} unidades`;
+        salesList.appendChild(li);
+      });
+    }
+
+    document.getElementById('add-sale-form').addEventListener('submit', function(event) {
+      event.preventDefault();
+      const name = document.getElementById('sale-name').value;
+      const quantity = parseInt(document.getElementById('sale-quantity').value);
+      salesStock.push({ name, quantity });
+      salesHistory.push({ name, quantity, date: new Date().toLocaleString() });
+      localStorage.setItem('salesStock', JSON.stringify(salesStock));
+      localStorage.setItem('salesHistory', JSON.stringify(salesHistory));
+      renderSalesStock();
+      event.target.reset();
+    });
+
+    renderSalesStock();
+  </script>
+</body>
+</html>
