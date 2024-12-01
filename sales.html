@@ -10,14 +10,14 @@
   <header>
     <h1>Gestión de Ventas</h1>
     <nav>
-     <a href="menu.html">Volver al Menú</a>
-     <a href="index.html">Cerrar sesión</a>
+      <a href="menu.html">Volver al Menú</a>
     </nav>
   </header>
   <main>
     <section>
       <h2>Productos para Venta</h2>
       <ul id="sales-stock"></ul>
+
       <form id="add-product-form">
         <h3>Crear Producto</h3>
         <input type="text" id="product-name" placeholder="Nombre del producto" required>
@@ -42,6 +42,7 @@
     let salesStock = JSON.parse(localStorage.getItem('salesStock')) || [];
     let salesHistory = JSON.parse(localStorage.getItem('salesHistory')) || [];
 
+    // Función para renderizar la lista de productos para venta
     function renderSalesStock() {
       const salesList = document.getElementById('sales-stock');
       const productSelect = document.getElementById('product-select');
@@ -51,9 +52,14 @@
 
       salesStock.forEach((item, index) => {
         const li = document.createElement('li');
-        li.textContent = `${item.name} - ${item.quantity} unidades disponibles - $${item.price}`;
+        li.innerHTML = `
+          ${item.name} - ${item.quantity} unidades disponibles - $${item.price}
+          <button onclick="editProduct(${index})">Editar</button>
+          <button onclick="deleteProduct(${index})">Eliminar</button>
+        `;
         salesList.appendChild(li);
 
+        // Agregar el producto al desplegable para ventas
         const option = document.createElement('option');
         option.value = index;
         option.textContent = item.name;
@@ -61,6 +67,7 @@
       });
     }
 
+    // Función para agregar un nuevo producto al stock
     document.getElementById('add-product-form').addEventListener('submit', function(event) {
       event.preventDefault();
       const name = document.getElementById('product-name').value;
@@ -78,38 +85,58 @@
       event.target.reset();
     });
 
+    // Función para registrar una venta
     document.getElementById('register-sale-form').addEventListener('submit', function(event) {
-  event.preventDefault();
-  const productIndex = document.getElementById('product-select').value;
-  const saleQuantity = parseInt(document.getElementById('sale-quantity').value);
+      event.preventDefault();
+      const productIndex = document.getElementById('product-select').value;
+      const saleQuantity = parseInt(document.getElementById('sale-quantity').value);
 
-  if (productIndex === '' || isNaN(saleQuantity) || saleQuantity <= 0) {
-    alert('Seleccione un producto y una cantidad válida.');
-    return;
-  }
+      if (productIndex === '' || isNaN(saleQuantity) || saleQuantity <= 0) {
+        alert('Seleccione un producto y una cantidad válida.');
+        return;
+      }
 
-  const selectedProduct = salesStock[productIndex];
-  if (saleQuantity > selectedProduct.quantity) {
-    alert('Cantidad insuficiente en el stock.');
-    return;
-  }
+      const selectedProduct = salesStock[productIndex];
+      if (saleQuantity > selectedProduct.quantity) {
+        alert('Cantidad insuficiente en el stock.');
+        return;
+      }
 
-  selectedProduct.quantity -= saleQuantity;
-  salesHistory.push({
-    name: selectedProduct.name,
-    quantity: saleQuantity,
-    price: selectedProduct.price,
-    date: new Date().toLocaleString(),
-  });
+      selectedProduct.quantity -= saleQuantity;
+      salesHistory.push({
+        name: selectedProduct.name,
+        quantity: saleQuantity,
+        price: selectedProduct.price,
+        date: new Date().toLocaleString(),
+      });
 
-  localStorage.setItem('salesStock', JSON.stringify(salesStock));
-  localStorage.setItem('salesHistory', JSON.stringify(salesHistory));
-  renderSalesStock();
-  alert('Venta registrada exitosamente.');
-  event.target.reset();
-});
+      localStorage.setItem('salesStock', JSON.stringify(salesStock));
+      localStorage.setItem('salesHistory', JSON.stringify(salesHistory));
+      renderSalesStock();
+      alert('Venta registrada exitosamente.');
+      event.target.reset();
+    });
 
+    // Función para editar un producto
+    function editProduct(index) {
+      const newQuantity = prompt("Nueva cantidad para el producto:", salesStock[index].quantity);
+      if (newQuantity && !isNaN(newQuantity)) {
+        salesStock[index].quantity = parseInt(newQuantity);
+        localStorage.setItem('salesStock', JSON.stringify(salesStock));
+        renderSalesStock();
+      }
+    }
 
+    // Función para eliminar un producto
+    function deleteProduct(index) {
+      if (confirm('¿Estás seguro de que deseas eliminar este producto?')) {
+        salesStock.splice(index, 1);
+        localStorage.setItem('salesStock', JSON.stringify(salesStock));
+        renderSalesStock();
+      }
+    }
+
+    // Renderizar los productos al cargar la página
     renderSalesStock();
   </script>
 </body>
