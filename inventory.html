@@ -3,115 +3,71 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Inventario - Govinda's</title>
+  <title>Inventario</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <header>
-    <h1>Inventario</h1>
+    <h1>Gestión de Inventario</h1>
     <nav>
-      <a href="index.html" class="menu-link">Volver al Menú</a>
-      <a href="pedido.html" class="menu-link">Ir a Pedidos</a>
+      <a href="history.html">Historial de Ventas</a>
+      <a href="login.html">Cerrar Sesión</a>
     </nav>
   </header>
-
   <main>
     <section>
-      <h2>Agregar Producto</h2>
+      <h2>Productos</h2>
+      <ul id="inventory-list"></ul>
       <form id="add-item-form">
-        <label for="item-name">Nombre del Producto:</label>
-        <input type="text" id="item-name" required>
-        <label for="item-price">Precio:</label>
-        <input type="number" id="item-price" min="0.01" step="0.01" required>
-        <label for="item-quantity">Cantidad:</label>
-        <input type="number" id="item-quantity" min="1" required>
-        <button type="submit">Agregar al Inventario</button>
+        <input type="text" id="item-name" placeholder="Nombre del producto" required>
+        <input type="number" id="item-quantity" placeholder="Cantidad" required>
+        <button type="submit">Agregar Producto</button>
       </form>
-    </section>
-
-    <section>
-      <h2>Productos en Inventario</h2>
-      <ul id="product-list"></ul>
-      <p><strong>Total de productos:</strong> <span id="product-count">0</span></p>
     </section>
   </main>
 
   <script>
-    // Inicializar inventario desde localStorage o crear uno vacío si no existe
     let inventory = JSON.parse(localStorage.getItem('inventory')) || [];
 
-    // Función para renderizar el inventario
     function renderInventory() {
-      const productList = document.getElementById('product-list');
-      const productCount = document.getElementById('product-count');
-
-      // Limpiar la lista antes de renderizar
-      productList.innerHTML = '';
-
-      // Verificar si hay productos en el inventario
-      if (inventory.length === 0) {
-        productList.innerHTML = '<li>No hay productos en el inventario.</li>';
-      } else {
-        // Renderizar los productos
-        inventory.forEach((item, index) => {
-          const li = document.createElement('li');
-          li.innerHTML = `
-            <strong>${item.name}</strong> - Precio: $${item.price.toFixed(2)} - Cantidad: ${item.quantity}
-            <button onclick="removeItem(${index})">Eliminar</button>
-          `;
-          productList.appendChild(li);
-        });
-      }
-
-      // Actualizar el contador de productos
-      productCount.textContent = inventory.length;
+      const inventoryList = document.getElementById('inventory-list');
+      inventoryList.innerHTML = '';
+      inventory.forEach((item, index) => {
+        const li = document.createElement('li');
+        li.innerHTML = `
+          ${item.name} - ${item.quantity} unidades
+          <button onclick="deleteItem(${index})">Eliminar</button>
+          <button onclick="editItem(${index})">Editar</button>
+        `;
+        inventoryList.appendChild(li);
+      });
     }
 
-    // Función para agregar un producto
-    document.getElementById('add-item-form').addEventListener('submit', function(event) {
-      event.preventDefault();
-
-      const name = document.getElementById('item-name').value.trim();
-      const price = parseFloat(document.getElementById('item-price').value);
-      const quantity = parseInt(document.getElementById('item-quantity').value);
-
-      // Validar los datos
-      if (!name || isNaN(price) || price <= 0 || isNaN(quantity) || quantity <= 0) {
-        alert('Por favor, ingresa datos válidos para el producto.');
-        return;
-      }
-
-      // Crear un nuevo producto
-      const newItem = { name, price, quantity };
-
-      // Agregar al inventario
-      inventory.push(newItem);
-
-      // Guardar el inventario en localStorage
+    function deleteItem(index) {
+      inventory.splice(index, 1);
       localStorage.setItem('inventory', JSON.stringify(inventory));
-
-      // Actualizar la vista
       renderInventory();
+    }
 
-      // Limpiar el formulario
-      document.getElementById('add-item-form').reset();
-    });
-
-    // Función para eliminar un producto
-    function removeItem(index) {
-      if (confirm('¿Estás seguro de que deseas eliminar este producto?')) {
-        // Eliminar el producto
-        inventory.splice(index, 1);
-
-        // Guardar el inventario actualizado
+    function editItem(index) {
+      const newQuantity = prompt("Nueva cantidad:", inventory[index].quantity);
+      if (newQuantity && !isNaN(newQuantity)) {
+        inventory[index].quantity = parseInt(newQuantity);
         localStorage.setItem('inventory', JSON.stringify(inventory));
-
-        // Volver a renderizar el inventario
         renderInventory();
       }
     }
 
-    // Renderizar el inventario al cargar la página
+    document.getElementById('add-item-form').addEventListener('submit', function(event) {
+      event.preventDefault();
+      const name = document.getElementById('item-name').value;
+      const quantity = parseInt(document.getElementById('item-quantity').value);
+      inventory.push({ name, quantity });
+      localStorage.setItem('inventory', JSON.stringify(inventory));
+      renderInventory();
+      event.target.reset();
+    });
+
     renderInventory();
   </script>
 </body>
