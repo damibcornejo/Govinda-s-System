@@ -20,8 +20,8 @@
           <option value="seller">Vendedor</option>
         </select>
         <div id="password-field" style="display: none;">
-          <label for="admin-password">Contraseña:</label>
-          <input type="password" id="admin-password" placeholder="Contraseña del administrador">
+          <label id="password-label" for="admin-password">Contraseña:</label>
+          <input type="password" id="admin-password" placeholder="Ingrese su contraseña">
         </div>
         <button type="submit">Ingresar</button>
       </form>
@@ -32,18 +32,33 @@
     const loginForm = document.getElementById('login-form');
     const userTypeSelect = document.getElementById('user-type');
     const passwordField = document.getElementById('password-field');
-    const adminPassword = "12345"; // Contraseña fija para el administrador
+    const passwordInput = document.getElementById('admin-password');
+    const passwordLabel = document.getElementById('password-label');
+
+    let adminPassword = localStorage.getItem('adminPassword');
 
     userTypeSelect.addEventListener('change', function() {
-      passwordField.style.display = userTypeSelect.value === 'admin' ? 'block' : 'none';
+      if (userTypeSelect.value === 'admin') {
+        passwordField.style.display = 'block';
+        passwordLabel.textContent = adminPassword
+          ? 'Contraseña:'
+          : 'Cree una contraseña:';
+      } else {
+        passwordField.style.display = 'none';
+      }
     });
 
     loginForm.addEventListener('submit', function(event) {
       event.preventDefault();
       const userType = userTypeSelect.value;
+
       if (userType === 'admin') {
-        const enteredPassword = document.getElementById('admin-password').value;
-        if (enteredPassword === adminPassword) {
+        const enteredPassword = passwordInput.value;
+        if (!adminPassword) {
+          localStorage.setItem('adminPassword', enteredPassword);
+          alert('Contraseña creada exitosamente.');
+          window.location.href = 'inventory.html';
+        } else if (enteredPassword === adminPassword) {
           window.location.href = 'inventory.html';
         } else {
           alert('Contraseña incorrecta.');
