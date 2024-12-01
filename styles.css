@@ -19,10 +19,15 @@ body {
 
 /* Cabecera de la página */
 header {
-  background-color: #4CAF50; /* Verde */
+  background-color: #787E81; /* Gris */
   color: white;
   text-align: center;
   padding: 20px;
+  width: 100%;
+  position: fixed; /* Hace que el encabezado esté fijo en la parte superior */
+  top: 0;
+  left: 0;
+  z-index: 10; /* Asegura que el encabezado se quede por encima del contenido */
 }
 
 h1 {
@@ -107,7 +112,7 @@ h1 {
 
 /* Estilo para el botón de Cerrar Sesión */
 .logout-btn {
-  background-color: #4CAF50; /* Verde */
+  background-color: #787E81; /* Gris */
   color: white;
   padding: 10px 20px;
   border: none;
@@ -121,7 +126,7 @@ h1 {
 }
 
 .logout-btn:hover {
-  background-color: #45a049; /* Verde más oscuro */
+  background-color: #787E81; /* Gris */
 }
 
 /* Asegurar que todos los enlaces dentro del menú tengan un buen diseño */
