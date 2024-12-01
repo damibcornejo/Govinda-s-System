@@ -123,11 +123,34 @@ h1 {
   background-color: #45a049; /* Verde más oscuro */
 }
 
-/* Centrado desde el borde derecho */
+/* Centrado de los botones */
 body {
   display: flex;
-  justify-content: flex-end;
-  padding-right: 20px;
+  justify-content: center; /* Centra el contenido en el eje horizontal */
+  align-items: center; /* Centra el contenido en el eje vertical si es necesario */
+  flex-direction: column; /* Organiza los elementos en una columna */
+  height: 100vh; /* Asegura que el cuerpo ocupe todo el alto de la ventana */
+  margin: 0;
+  padding: 0;
+}
+
+/* Botón de Cerrar Sesión */
+.logout-btn {
+  background-color: #4CAF50; /* Verde */
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px; /* Disminuir tamaño */
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+  display: block;
+  margin: 10px 0; /* Separar los botones si hay más */
+}
+
+.logout-btn:hover {
+  background-color: #45a049; /* Verde más oscuro */
 }
 
 
