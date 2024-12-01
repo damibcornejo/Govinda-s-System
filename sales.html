@@ -17,10 +17,22 @@
     <section>
       <h2>Productos para Venta</h2>
       <ul id="sales-stock"></ul>
-      <form id="add-sale-form">
-        <input type="text" id="sale-name" placeholder="Nombre del producto" required>
-        <input type="number" id="sale-quantity" placeholder="Cantidad" required>
-        <button type="submit">Agregar Venta</button>
+      <form id="add-product-form">
+        <h3>Crear Producto</h3>
+        <input type="text" id="product-name" placeholder="Nombre del producto" required>
+        <input type="number" id="product-price" placeholder="Precio unitario" required>
+        <input type="number" id="product-quantity" placeholder="Cantidad inicial" required>
+        <button type="submit">Agregar Producto</button>
+      </form>
+
+      <form id="register-sale-form">
+        <h3>Registrar Venta</h3>
+        <label for="product-select">Producto:</label>
+        <select id="product-select" required>
+          <option value="">Seleccione un producto</option>
+        </select>
+        <input type="number" id="sale-quantity" placeholder="Cantidad vendida" required>
+        <button type="submit">Registrar Venta</button>
       </form>
     </section>
   </main>
@@ -31,23 +43,68 @@
 
     function renderSalesStock() {
       const salesList = document.getElementById('sales-stock');
+      const productSelect = document.getElementById('product-select');
+
       salesList.innerHTML = '';
+      productSelect.innerHTML = '<option value="">Seleccione un producto</option>';
+
       salesStock.forEach((item, index) => {
         const li = document.createElement('li');
-        li.innerHTML = `${item.name} - ${item.quantity} unidades`;
+        li.textContent = `${item.name} - ${item.quantity} unidades disponibles - $${item.price}`;
         salesList.appendChild(li);
+
+        const option = document.createElement('option');
+        option.value = index;
+        option.textContent = item.name;
+        productSelect.appendChild(option);
       });
     }
 
-    document.getElementById('add-sale-form').addEventListener('submit', function(event) {
+    document.getElementById('add-product-form').addEventListener('submit', function(event) {
       event.preventDefault();
-      const name = document.getElementById('sale-name').value;
-      const quantity = parseInt(document.getElementById('sale-quantity').value);
-      salesStock.push({ name, quantity });
-      salesHistory.push({ name, quantity, date: new Date().toLocaleString() });
+      const name = document.getElementById('product-name').value;
+      const price = parseFloat(document.getElementById('product-price').value);
+      const quantity = parseInt(document.getElementById('product-quantity').value);
+
+      if (!name || isNaN(price) || isNaN(quantity) || price <= 0 || quantity <= 0) {
+        alert('Por favor, complete los campos correctamente.');
+        return;
+      }
+
+      salesStock.push({ name, price, quantity });
+      localStorage.setItem('salesStock', JSON.stringify(salesStock));
+      renderSalesStock();
+      event.target.reset();
+    });
+
+    document.getElementById('register-sale-form').addEventListener('submit', function(event) {
+      event.preventDefault();
+      const productIndex = document.getElementById('product-select').value;
+      const saleQuantity = parseInt(document.getElementById('sale-quantity').value);
+
+      if (productIndex === '' || isNaN(saleQuantity) || saleQuantity <= 0) {
+        alert('Seleccione un producto y una cantidad válida.');
+        return;
+      }
+
+      const selectedProduct = salesStock[productIndex];
+      if (saleQuantity > selectedProduct.quantity) {
+        alert('Cantidad insuficiente en el stock.');
+        return;
+      }
+
+      selectedProduct.quantity -= saleQuantity;
+      salesHistory.push({
+        name: selectedProduct.name,
+        quantity: saleQuantity,
+        price: selectedProduct.price,
+        date: new Date().toLocaleString(),
+      });
+
       localStorage.setItem('salesStock', JSON.stringify(salesStock));
       localStorage.setItem('salesHistory', JSON.stringify(salesHistory));
       renderSalesStock();
+      alert('Venta registrada exitosamente.');
       event.target.reset();
     });
 
