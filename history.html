@@ -3,60 +3,54 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Historial de Pedidos - Govinda's</title>
+  <title>Historial de Ventas</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <header>
-    <h1>Historial de Pedidos</h1>
+    <h1>Historial de Ventas</h1>
     <nav>
-      <a href="index.html" class="menu-link">Volver al Menú</a>
+      <a href="menu.html">Volver al Menú</a>
     </nav>
   </header>
-
   <main>
     <section>
-      <h2>Pedidos Anteriores</h2>
-      <ul id="order-history-list"></ul>
+      <h2>Ventas Registradas</h2>
+      <ul id="sales-history-list"></ul>
+      <button id="clear-history">Limpiar Historial</button>
     </section>
   </main>
 
   <script>
-    // Cargar el historial de pedidos desde localStorage
-    const orderHistory = JSON.parse(localStorage.getItem('orderHistory')) || [];
+    const salesHistory = JSON.parse(localStorage.getItem('salesHistory')) || [];
 
-    // Función para mostrar el historial de pedidos
-    function renderOrderHistory() {
-      const orderHistoryList = document.getElementById('order-history-list');
+    function renderSalesHistory() {
+      const salesList = document.getElementById('sales-history-list');
+      salesList.innerHTML = '';
 
-      if (orderHistory.length === 0) {
-        orderHistoryList.innerHTML = '<p>No hay pedidos previos.</p>';
+      if (salesHistory.length === 0) {
+        salesList.innerHTML = '<li>No hay ventas registradas.</li>';
         return;
       }
 
-      orderHistory.forEach(order => {
-        const orderDate = new Date(order.orderDate); // Crear un objeto Date con la fecha y hora
-        const orderDateFormatted = orderDate.toLocaleString(); // Fecha y hora en formato legible
-
+      salesHistory.forEach((sale, index) => {
         const li = document.createElement('li');
         li.innerHTML = `
-          <h3>Pedido ID: ${order.orderId}</h3>
-          <p><strong>Fecha y Hora:</strong> ${orderDateFormatted}</p>
-          <p><strong>Total:</strong> $${order.totalPrice}</p>
-          <h4>Productos:</h4>
-          <ul>
-            ${order.orderItems.map(item => `
-              <li>${item.product} x${item.quantity} - $${item.unitPrice} c/u - Total: $${item.totalPrice}</li>
-            `).join('')}
-          </ul>
+          Producto: ${sale.name} - Cantidad: ${sale.quantity} - Precio Total: $${(sale.quantity * sale.price).toFixed(2)} - Fecha: ${sale.date}
         `;
-        orderHistoryList.appendChild(li);
+        salesList.appendChild(li);
       });
     }
 
-    // Llamar a la función para renderizar el historial de pedidos
-    renderOrderHistory();
+    document.getElementById('clear-history').addEventListener('click', function() {
+      if (confirm('¿Estás seguro de que deseas limpiar el historial de ventas?')) {
+        localStorage.removeItem('salesHistory');
+        alert('Historial de ventas limpiado.');
+        window.location.reload();
+      }
+    });
+
+    renderSalesHistory();
   </script>
 </body>
 </html>
-
