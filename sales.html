@@ -10,7 +10,7 @@
   <header>
     <h1>Gestión de Ventas</h1>
     <nav>
-      <a href="login.html">Cerrar Sesión</a>
+     <a href="menu.html">Volver al Menú</a>
     </nav>
   </header>
   <main>
@@ -78,35 +78,36 @@
     });
 
     document.getElementById('register-sale-form').addEventListener('submit', function(event) {
-      event.preventDefault();
-      const productIndex = document.getElementById('product-select').value;
-      const saleQuantity = parseInt(document.getElementById('sale-quantity').value);
+  event.preventDefault();
+  const productIndex = document.getElementById('product-select').value;
+  const saleQuantity = parseInt(document.getElementById('sale-quantity').value);
 
-      if (productIndex === '' || isNaN(saleQuantity) || saleQuantity <= 0) {
-        alert('Seleccione un producto y una cantidad válida.');
-        return;
-      }
+  if (productIndex === '' || isNaN(saleQuantity) || saleQuantity <= 0) {
+    alert('Seleccione un producto y una cantidad válida.');
+    return;
+  }
 
-      const selectedProduct = salesStock[productIndex];
-      if (saleQuantity > selectedProduct.quantity) {
-        alert('Cantidad insuficiente en el stock.');
-        return;
-      }
+  const selectedProduct = salesStock[productIndex];
+  if (saleQuantity > selectedProduct.quantity) {
+    alert('Cantidad insuficiente en el stock.');
+    return;
+  }
 
-      selectedProduct.quantity -= saleQuantity;
-      salesHistory.push({
-        name: selectedProduct.name,
-        quantity: saleQuantity,
-        price: selectedProduct.price,
-        date: new Date().toLocaleString(),
-      });
+  selectedProduct.quantity -= saleQuantity;
+  salesHistory.push({
+    name: selectedProduct.name,
+    quantity: saleQuantity,
+    price: selectedProduct.price,
+    date: new Date().toLocaleString(),
+  });
 
-      localStorage.setItem('salesStock', JSON.stringify(salesStock));
-      localStorage.setItem('salesHistory', JSON.stringify(salesHistory));
-      renderSalesStock();
-      alert('Venta registrada exitosamente.');
-      event.target.reset();
-    });
+  localStorage.setItem('salesStock', JSON.stringify(salesStock));
+  localStorage.setItem('salesHistory', JSON.stringify(salesHistory));
+  renderSalesStock();
+  alert('Venta registrada exitosamente.');
+  event.target.reset();
+});
+
 
     renderSalesStock();
   </script>
