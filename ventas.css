@@ -1,7 +1,7 @@
 /* Estilo del encabezado */
 /* */
 header {
-  background-color: #9c27b0; /* Morado claro */
+  background-color: #CAAED8; /* Morado claro */
   color: white;
   text-align: center;
   padding: 20px 0;
@@ -48,7 +48,7 @@ header nav a:active {
   margin: 10px 0;
   padding: 10px 15px;
   font-size: 16px;
-  color: #8e24aa; /* Morado para el texto */
+  color: #333; /* Morado para el texto */
 }
 
 /* Botones (Agregar Producto y Registrar Venta) */
@@ -56,10 +56,13 @@ button {
   background-color: #ba68c8; /* Morado más claro */
   color: white;
   border: none;
-  padding: 10px 20px;
-  font-size: 16px;
+
   font-weight: bold;
-  border-radius: 5px;
+
+  padding: 5px 10px;
+  font-size: 14px;
+  border-radius: 3px;
+  margin-left: 10px;
   cursor: pointer;
   transition: background-color 0.3s;
 }
