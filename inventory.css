@@ -16,17 +16,27 @@ header {
   border-bottom: 4px solid #388e3c; /* Borde inferior más oscuro */
 }
 
-/* Estilo de los enlaces del menú dentro del header */
+/* Botones específicos dentro del header (enlaces) */
 header nav a {
+  display: inline-block;
+  background-color: #4caf50; /* Verde */
   color: white;
   text-decoration: none;
-  margin: 0 15px;
+  padding: 8px 15px;
+  border-radius: 5px;
+  margin: 0 5px;
   font-weight: bold;
+  transition: background-color 0.3s;
 }
 
 header nav a:hover {
-  text-decoration: underline;
+  background-color: #45a049;
 }
+
+header nav a:active {
+  background-color: #388e3c;
+}
+
 
 /* Estilo del título principal */
 header h1 {
