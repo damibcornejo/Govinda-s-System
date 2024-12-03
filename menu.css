@@ -61,7 +61,7 @@ header h1 {
 }
 
 .menu ul li a:hover {
-  color: #333;
+  color: #C1C5C9;
 }
 
 /* Menú del Administrador */
@@ -79,6 +79,7 @@ header h1 {
 /* Botón de Cerrar Sesión */
 .logout-btn {
   background-color: #4a90e2;
+  display:flex;
   color: white;
   border: none;
   border-radius: 8px;
