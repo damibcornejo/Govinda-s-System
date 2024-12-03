@@ -1,83 +1,111 @@
-/* Estilos específicos para Gestión de Inventario */
-/* Estilo del header para la página de Inventario */
-header {
-  background-color: #f5e0dc; /* Color rosado */
-  color: #333;
-  text-align: center;
-  padding: 20px 0;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.inventory-container {
-  padding: 20px;
-  max-width: 800px;
-  margin: 0 auto;
-  background: #ffffff;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-.inventory-container h2 {
-  color: #4caf50;
-  font-size: 1.8rem;
-  margin-bottom: 20px;
-}
-
-.inventory-list {
-  list-style-type: none;
+/* Estilo general para el cuerpo */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f9;
+  margin: 0;
   padding: 0;
+  color: #333;
 }
 
-.inventory-list li {
+/* Estilo del header */
+header {
+  background-color: #4caf50; /* Color verde para el header */
+  color: white;
+  padding: 20px;
+  text-align: center;
+  border-bottom: 4px solid #388e3c; /* Borde inferior más oscuro */
+}
+
+/* Estilo de los enlaces del menú dentro del header */
+header nav a {
+  color: white;
+  text-decoration: none;
+  margin: 0 15px;
+  font-weight: bold;
+}
+
+header nav a:hover {
+  text-decoration: underline;
+}
+
+/* Estilo del título principal */
+header h1 {
+  margin: 0;
+  font-size: 28px;
+}
+
+/* Estilo del main */
+main {
+  padding: 20px;
+}
+
+/* Estilo del formulario */
+form {
+  margin-top: 20px;
   padding: 15px;
-  margin: 10px 0;
+  background-color: #ffffff;
   border: 1px solid #ddd;
   border-radius: 8px;
-  background-color: #f9f9f9;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.inventory-list li button {
-  background-color: #e74c3c;
+/* Estilo de los botones */
+button {
+  background-color: #4caf50; /* Color verde */
   color: white;
+  border: none;
+  padding: 10px 15px;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #45a049; /* Color más oscuro en hover */
+}
+
+button:active {
+  background-color: #388e3c; /* Aún más oscuro al presionar */
+}
+
+/* Estilo para la lista de inventario */
+#inventory-list {
+  list-style: none;
+  padding: 0;
+  margin: 20px 0;
+}
+
+#inventory-list li {
+  padding: 10px;
+  margin: 5px 0;
+  background-color: #e8f5e9; /* Fondo verde claro */
+  border: 1px solid #c8e6c9; /* Borde verde suave */
+  border-radius: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Botones de edición y eliminación dentro de la lista */
+#inventory-list button {
+  background-color: #ff5252; /* Color rojo para eliminar */
   padding: 5px 10px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-left: 5px;
-  font-size: 0.8rem;
+  font-size: 14px;
+  border-radius: 3px;
+  margin-left: 10px;
 }
 
-.inventory-list li button:hover {
-  background-color: #c0392b;
+#inventory-list button:hover {
+  background-color: #e53935;
 }
 
-.inventory-form {
-  margin-top: 20px;
+#inventory-list button:first-of-type {
+  background-color: #ffa000; /* Naranja para editar */
 }
 
-.inventory-form input,
-.inventory-form button {
-  display: block;
-  width: 100%;
-  margin-bottom: 10px;
+#inventory-list button:first-of-type:hover {
+  background-color: #fb8c00;
 }
 
-.inventory-form input {
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
-
-.inventory-form button {
-  padding: 10px;
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 1rem;
-}
-
-.inventory-form button:hover {
-  background-color: #45a049;
-}
