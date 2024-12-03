@@ -1,32 +1,79 @@
-/* Estilos específicos para Ventas */
-.ventas-container {
-  padding: 20px;
-  max-width: 800px;
-  margin: 0 auto;
-  background: white;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-.ventas-lista {
-  margin-top: 20px;
-}
-
-.ventas-lista li {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border: 1px solid #ddd;
-}
-
-.ventas-lista li button {
-  background-color: #e74c3c;
+/* Estilo del encabezado */
+header {
+  background-color: #9c27b0; /* Morado claro */
   color: white;
-  padding: 5px 10px;
+  text-align: center;
+  padding: 20px 0;
+  font-family: 'Roboto', sans-serif;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 28px;
+}
+
+/* Estilo de los enlaces del menú */
+header nav a {
+  display: inline-block;
+  background-color: #ba68c8; /* Morado más claro */
+  color: white;
+  text-decoration: none;
+  padding: 8px 15px;
+  margin: 0 5px;
+  border-radius: 5px;
+  font-weight: bold;
+  transition: background-color 0.3s;
+}
+
+header nav a:hover {
+  background-color: #8e24aa; /* Morado más oscuro */
+}
+
+header nav a:active {
+  background-color: #6a1b9a; /* Morado profundo */
+}
+
+/* Lista de productos */
+#sales-stock {
+  list-style: none;
+  padding: 0;
+  font-family: 'Roboto', sans-serif;
+}
+
+#sales-stock li {
+  background-color: #f3e5f5; /* Fondo morado muy claro */
+  border: 1px solid #e1bee7; /* Morado más oscuro para el borde */
+  border-radius: 5px;
+  margin: 10px 0;
+  padding: 10px 15px;
+  font-size: 16px;
+  color: #8e24aa; /* Morado para el texto */
+}
+
+/* Botones (Agregar Producto y Registrar Venta) */
+button {
+  background-color: #ba68c8; /* Morado más claro */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
   border-radius: 5px;
   cursor: pointer;
+  transition: background-color 0.3s;
 }
 
-.ventas-lista li button:hover {
-  background-color: #c0392b;
+button:hover {
+  background-color: #8e24aa; /* Morado más oscuro */
+}
+
+button:active {
+  background-color: #6a1b9a; /* Morado profundo */
+}
+
+/* Botón "Registrar Venta" y "Agregar Producto" centrado */
+form button {
+  display: block;
+  margin: 20px auto;
+  max-width: 200px;
 }
