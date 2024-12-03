@@ -1,4 +1,13 @@
 /* Estilos específicos para Gestión de Inventario */
+/* Estilo del header para la página de Inventario */
+header {
+  background-color: #f5e0dc; /* Color rosado */
+  color: #333;
+  text-align: center;
+  padding: 20px 0;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
 .inventory-container {
   padding: 20px;
   max-width: 800px;
