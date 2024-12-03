@@ -8,7 +8,7 @@
 /* Estilo global para el body */
 body {
   font-family: 'Roboto', sans-serif;
-  background: linear-gradient(135deg, #f4f4f4, #d6e4f0);
+  background: linear-gradient(to bottom, #ff7e5f, #feb47b);
   display: grid;
   grid-template-rows: auto 1fr auto;
   justify-items: center;
@@ -154,6 +154,7 @@ footer {
   cursor: pointer;
   transition: background-color 0.3s ease;
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+  margin-top:20px;
 }
 
 .logout-btn:hover {
