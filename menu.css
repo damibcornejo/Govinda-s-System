@@ -7,14 +7,14 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: start;
+  justify-content: center;
   background: linear-gradient(to bottom right, #f5f7fa, #c3cfe2);
 }
 
 /* Encabezado */
 header {
   width: 100%;
-  background-color: #333;
+  background-color: #4a90e2;
   color: white;
   padding: 20px 0;
   text-align: center;
@@ -66,19 +66,19 @@ header h1 {
 
 /* Menú del Administrador */
 .admin-menu {
-  background-color: #f5e0dc;
-  border: 2px solid #e09f9f;
+  background-color: #91CB91;//verdecito
+  border: 2px solid #64E464;//verde mas oscuro
 }
 
 /* Menú del Vendedor */
 .seller-menu {
-  background-color: #dce9f5;
-  border: 2px solid #9fbbe0;
+  background-color: #B392BD;//moradito
+  border: 2px solid #A955C1;//moradito oscuro
 }
 
 /* Botón de Cerrar Sesión */
 .logout-btn {
-  background-color: #ff6f61;
+  background-color: #4a90e2;
   color: white;
   border: none;
   border-radius: 8px;
@@ -89,7 +89,7 @@ header h1 {
 }
 
 .logout-btn:hover {
-  background-color: #e05a4e;
+  background-color: #4a90e2;
   transform: scale(1.05);
 }
 
