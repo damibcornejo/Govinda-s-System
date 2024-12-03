@@ -16,28 +16,26 @@ header {
   border-bottom: 4px solid #388e3c; /* Borde inferior más oscuro */
 }
 
-/* Botones específicos dentro del header (enlaces) */
+/* Estilo de los enlaces del menú */
 header nav a {
   display: inline-block;
-  background-color: #4caf50; /* Verde */
+  background-color: #66bb6a; /* Verde más claro */
   color: white;
   text-decoration: none;
   padding: 8px 15px;
-  border-radius: 5px;
   margin: 0 5px;
+  border-radius: 5px;
   font-weight: bold;
   transition: background-color 0.3s;
 }
 
 header nav a:hover {
-  background-color: #45a049;
+  background-color: #43a047; /* Verde más oscuro */
 }
 
 header nav a:active {
-  background-color: #388e3c;
+  background-color: #2e7d32; /* Verde profundo */
 }
-
-
 /* Estilo del título principal */
 header h1 {
   margin: 0;
