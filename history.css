@@ -1,53 +1,79 @@
-/* Estilos específicos para Historial de Ventas */
-.history-container {
-  padding: 20px;
-  max-width: 800px;
-  margin: 0 auto;
-  background: #ffffff;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+/* Estilo del encabezado */
+header {
+  background-color: #4caf50; /* Verde para el header */
+  color: white;
+  text-align: center;
+  padding: 20px 0;
+  font-family: 'Roboto', sans-serif;
 }
 
-.history-container h2 {
-  color: #4a90e2;
-  font-size: 1.8rem;
-  margin-bottom: 20px;
+header h1 {
+  margin: 0;
+  font-size: 28px;
 }
 
-.history-list {
-  list-style-type: none;
-  padding: 0;
-}
-
-.history-list li {
-  padding: 15px;
-  margin: 10px 0;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  background-color: #f9f9f9;
-}
-
-.history-list li h3 {
-  margin: 0 0 5px;
-  color: #333;
-}
-
-.history-list li p {
-  margin: 5px 0;
-  font-size: 0.9rem;
-  color: #555;
-}
-
-.history-list li ul {
-  margin-top: 10px;
-  padding-left: 20px;
-}
-
-.history-list li ul li {
-  font-size: 0.9rem;
-  color: #777;
-}
-
-.history-list li ul li span {
+/* Estilo de los enlaces del menú */
+header nav a {
+  display: inline-block;
+  background-color: #66bb6a; /* Verde más claro */
+  color: white;
+  text-decoration: none;
+  padding: 8px 15px;
+  margin: 0 5px;
+  border-radius: 5px;
   font-weight: bold;
+  transition: background-color 0.3s;
+}
+
+header nav a:hover {
+  background-color: #43a047; /* Verde más oscuro */
+}
+
+header nav a:active {
+  background-color: #2e7d32; /* Verde profundo */
+}
+
+/* Lista de ventas */
+#sales-history-list {
+  list-style: none;
+  padding: 0;
+  font-family: 'Roboto', sans-serif;
+}
+
+#sales-history-list li {
+  background-color: #f1f8e9; /* Fondo claro verde */
+  border: 1px solid #c5e1a5; /* Verde claro */
+  border-radius: 5px;
+  margin: 10px 0;
+  padding: 10px 15px;
+  font-size: 16px;
+  color: #388e3c; /* Verde para el texto */
+}
+
+/* Botón "Limpiar Historial" */
+button {
+  background-color: #66bb6a; /* Verde */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #43a047;
+}
+
+button:active {
+  background-color: #2e7d32;
+}
+
+/* Botón "Limpiar Historial" centrado */
+#clear-history {
+  display: block;
+  margin: 20px auto;
+  max-width: 200px;
 }
