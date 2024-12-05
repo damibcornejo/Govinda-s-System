@@ -3,47 +3,62 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Historial de Ventas</title>
+  <title>Historial de Boletas</title>
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="history.css">
 </head>
 <body>
   <header>
-    <h1>Historial de Ventas</h1>
+    <h1>Historial de Boletas</h1>
     <nav>
       <a href="menu.html">Volver a Menú</a>
-      <a href="inventory.html">Inventario</a>
+      <a href="boleta.html">Boleta</a>
       <a href="index.html">Cerrar Sesión</a>
     </nav>
   </header>
   <main>
-    <h2>Ventas Realizadas</h2>
-    <ul id="sales-history"></ul>
-    <p id="total-sales"></p>
+    <section>
+      <h2>Lista de Ventas Realizadas</h2>
+      <div id="history-list">
+        <!-- Aquí se renderiza el historial de ventas -->
+      </div>
+    </section>
   </main>
 
   <script>
+    // Obtener el historial de ventas desde localStorage
     const salesHistory = JSON.parse(localStorage.getItem('salesHistory')) || [];
-    const salesList = document.getElementById('sales-history');
-    let totalDaySales = 0;
+    
+    // Referencia al contenedor
+    const historyList = document.getElementById('history-list');
 
     if (salesHistory.length === 0) {
-      salesList.innerHTML = '<p>No hay ventas registradas.</p>';
+      historyList.innerHTML = '<p>No hay boletas registradas.</p>';
     } else {
       salesHistory.forEach((sale, index) => {
-        totalDaySales += sale.finalAmount;
-
-        const li = document.createElement('li');
-        li.innerHTML = `
-          <p>
-            <strong>Fecha:</strong> ${sale.date}<br>
-            <strong>Total:</strong> ${sale.finalAmount.toLocaleString('es-CL', { style: 'currency', currency: 'CLP' })}<br>
-            <a href="boleta.html?id=${index}">Ver Boleta</a>
-          </p>
-        `;
-        salesList.appendChild(li);
+        renderHistoryItem(sale, index);
       });
+    }
 
-      document.getElementById('total-sales').textContent = `Total del Día: ${totalDaySales.toLocaleString('es-CL', { style: 'currency', currency: 'CLP' })}`;
+    // Función para renderizar cada venta en el historial
+    function renderHistoryItem(sale, index) {
+      const saleHtml = `
+        <div class="history-item">
+          <h3>Boleta ${index + 1}</h3>
+          <p><strong>Fecha:</strong> ${sale.date}</p>
+          <p><strong>Monto Total:</strong> $${sale.totalAmount.toFixed(2)}</p>
+          <p><strong>Propina:</strong> $${sale.tip.toFixed(2)}</p>
+          <p><strong>Total con Propina:</strong> $${sale.finalAmount.toFixed(2)}</p>
+          <h4>Productos Vendidos:</h4>
+          <ul>
+            ${sale.items.map(item => `
+              <li>${item.name} - ${item.quantity} unidades a $${item.price.toFixed(2)} c/u
+              <br>Total: $${(item.quantity * item.price).toFixed(2)}</li>
+            `).join('')}
+          </ul>
+        </div>
+      `;
+      historyList.innerHTML += saleHtml;
     }
   </script>
 </body>
