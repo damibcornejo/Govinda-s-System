@@ -25,10 +25,10 @@
   </main>
 
   <script>
-    // Obtener el historial de ventas desde localStorage
+    // Cargar historial de ventas desde localStorage
     const salesHistory = JSON.parse(localStorage.getItem('salesHistory')) || [];
 
-    // Renderizar el historial de ventas
+    // Función para renderizar el historial
     function renderSalesHistory() {
       const salesList = document.getElementById('sales-history-list');
       salesList.innerHTML = '';
@@ -41,15 +41,17 @@
       salesHistory.forEach((sale, index) => {
         const li = document.createElement('li');
         li.innerHTML = `
-          <strong>Fecha:</strong> ${sale.date} <br>
-          <strong>Monto Total:</strong> $${sale.finalAmount.toFixed(2)} <br>
-          <a href="boleta.html?id=${index}">Ver Boleta</a>
+          <p>
+            <strong>Fecha:</strong> ${sale.date} <br>
+            <strong>Total:</strong> $${sale.finalAmount.toFixed(2)} <br>
+            <a href="boleta.html?id=${index}">Ver Boleta</a>
+          </p>
         `;
         salesList.appendChild(li);
       });
     }
 
-    // Función para limpiar el historial de ventas
+    // Evento para limpiar el historial
     document.getElementById('clear-history').addEventListener('click', function () {
       if (confirm('¿Estás seguro de que deseas limpiar el historial de ventas?')) {
         localStorage.removeItem('salesHistory');
@@ -58,9 +60,7 @@
       }
     });
 
-    // Llamar a la función para mostrar el historial
     renderSalesHistory();
   </script>
 </body>
 </html>
-
