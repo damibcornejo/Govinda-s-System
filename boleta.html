@@ -11,56 +11,39 @@
   <header>
     <h1>Boleta de Venta</h1>
     <nav>
-      <a href="menu.html">Volver a Menú</a>
-      <a href="sales.html">Ventas</a>
-      <a href="index.html">Cerrar Sesión</a>
+      <a href="history.html">Volver al Historial</a>
+      <a href="menu.html">Menú</a>
     </nav>
   </header>
   <main>
     <section>
-      <h2>Detalle de la Boleta</h2>
-      <div id="receipt-details">
-        <!-- Aquí se renderizan los detalles de la boleta -->
-      </div>
+      <h2>Detalle de la Venta</h2>
+      <div id="boleta-details"></div>
     </section>
   </main>
 
   <script>
-    // Obtener el historial de ventas desde localStorage
+    const params = new URLSearchParams(window.location.search);
+    const saleIndex = params.get('id');
     const salesHistory = JSON.parse(localStorage.getItem('salesHistory')) || [];
-    
-    // Si no hay ventas registradas
-    if (salesHistory.length === 0) {
-      document.getElementById('receipt-details').innerHTML = '<p>No hay ventas registradas.</p>';
+
+    if (saleIndex === null || !salesHistory[saleIndex]) {
+      document.getElementById('boleta-details').innerHTML = '<p>Venta no encontrada.</p>';
     } else {
-      // Mostrar la última venta realizada
-      const lastSale = salesHistory[salesHistory.length - 1];
-      renderReceipt(lastSale);
-    }
+      const sale = salesHistory[saleIndex];
+      const detailsDiv = document.getElementById('boleta-details');
 
-    // Función para renderizar la boleta
-    function renderReceipt(sale) {
-      const receiptDetails = document.getElementById('receipt-details');
-      let html = `
+      detailsDiv.innerHTML = `
         <p><strong>Fecha:</strong> ${sale.date}</p>
-        <p><strong>Monto Total:</strong> $${sale.totalAmount.toFixed(2)}</p>
-        <p><strong>Propina:</strong> $${sale.tip.toFixed(2)}</p>
-        <p><strong>Total con Propina:</strong> $${sale.finalAmount.toFixed(2)}</p>
-        <h3>Productos Vendidos:</h3>
+        <p><strong>Productos Vendidos:</strong></p>
         <ul>
+          ${sale.items.map(item => `
+            <li>${item.name} - ${item.quantity} unidades a $${item.price} c/u</li>
+          `).join('')}
+        </ul>
+        <p><strong>Propina:</strong> $${sale.tip.toFixed(2)}</p>
+        <p><strong>Monto Total:</strong> $${sale.finalAmount.toFixed(2)}</p>
       `;
-
-      sale.items.forEach(item => {
-        html += `
-          <li>
-            ${item.name} - ${item.quantity} unidades a $${item.price.toFixed(2)} c/u
-            <br>Total: $${(item.quantity * item.price).toFixed(2)}
-          </li>
-        `;
-      });
-
-      html += '</ul>';
-      receiptDetails.innerHTML = html;
     }
   </script>
 </body>
