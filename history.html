@@ -5,14 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Historial de Ventas</title>
   <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet" href="ventas.css">
+  <link rel="stylesheet" href="history.css">
 </head>
 <body>
   <header>
     <h1>Historial de Ventas</h1>
     <nav>
       <a href="menu.html">Volver a Menú</a>
-      <a href="sales.html">Registrar Venta</a>
+      <a href="inventory.html">Inventario</a>
       <a href="index.html">Cerrar Sesión</a>
     </nav>
   </header>
@@ -25,17 +25,21 @@
     const salesHistory = JSON.parse(localStorage.getItem('salesHistory')) || [];
     const salesList = document.getElementById('sales-history');
 
-    salesHistory.forEach((sale, index) => {
-      const li = document.createElement('li');
-      li.innerHTML = `
-        <p>
-          <strong>Fecha:</strong> ${sale.date} <br>
-          <strong>Total:</strong> $${sale.finalAmount.toFixed(2)} <br>
-          <a href="boleta.html?id=${index}">Ver Boleta</a>
-        </p>
-      `;
-      salesList.appendChild(li);
-    });
+    if (salesHistory.length === 0) {
+      salesList.innerHTML = '<p>No hay ventas registradas.</p>';
+    } else {
+      salesHistory.forEach((sale, index) => {
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <p>
+            <strong>Fecha:</strong> ${sale.date} <br>
+            <strong>Total:</strong> $${sale.finalAmount.toFixed(2)} <br>
+            <a href="boleta.html?id=${index}">Ver Boleta</a>
+          </p>
+        `;
+        salesList.appendChild(li);
+      });
+    }
   </script>
 </body>
 </html>
