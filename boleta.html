@@ -12,7 +12,7 @@
     <h1>Boleta de Venta</h1>
     <nav>
       <a href="menu.html">Volver a Menú</a>
-      <a href="sales.html">Ventas</a>
+      <a href="history.html">Historial de Ventas</a>
       <a href="index.html">Cerrar Sesión</a>
     </nav>
   </header>
@@ -27,15 +27,16 @@
 
   <script>
     // Obtener el historial de ventas desde localStorage
+    const params = new URLSearchParams(window.location.search);
+    const saleIndex = parseInt(params.get('id'), 10);
     const salesHistory = JSON.parse(localStorage.getItem('salesHistory')) || [];
-    
-    // Si no hay ventas registradas
-    if (salesHistory.length === 0) {
-      document.getElementById('receipt-details').innerHTML = '<p>No hay ventas registradas.</p>';
+
+    // Verificar si el índice es válido y la venta existe
+    if (isNaN(saleIndex) || !salesHistory[saleIndex]) {
+      document.getElementById('receipt-details').innerHTML = '<p>No se encontró la venta seleccionada.</p>';
     } else {
-      // Mostrar la última venta realizada
-      const lastSale = salesHistory[salesHistory.length - 1];
-      renderReceipt(lastSale);
+      const sale = salesHistory[saleIndex];
+      renderReceipt(sale);
     }
 
     // Función para renderizar la boleta
@@ -43,9 +44,9 @@
       const receiptDetails = document.getElementById('receipt-details');
       let html = `
         <p><strong>Fecha:</strong> ${sale.date}</p>
-        <p><strong>Monto Total:</strong> $${sale.totalAmount.toFixed(2)}</p>
+        <p><strong>Monto Total (sin propina):</strong> $${sale.totalAmount.toFixed(2)}</p>
         <p><strong>Propina:</strong> $${sale.tip.toFixed(2)}</p>
-        <p><strong>Total con Propina:</strong> $${sale.finalAmount.toFixed(2)}</p>
+        <p><strong>Total (con propina):</strong> $${sale.finalAmount.toFixed(2)}</p>
         <h3>Productos Vendidos:</h3>
         <ul>
       `;
@@ -65,3 +66,4 @@
   </script>
 </body>
 </html>
+
