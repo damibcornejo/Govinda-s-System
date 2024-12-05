@@ -27,16 +27,6 @@
         <button type="submit">Agregar Producto</button>
       </form>
 
-      <form id="register-sale-form">
-        <h3>Registrar Venta</h3>
-        <label for="product-select">Producto:</label>
-        <select id="product-select" required>
-          <option value="">Seleccione un producto</option>
-        </select>
-        <input type="number" id="sale-quantity" placeholder="Cantidad vendida" required>
-        <button type="button" id="add-to-cart">Añadir al Carrito</button>
-      </form>
-
       <h3>Carrito de Pedido</h3>
       <ul id="cart-list"></ul>
       <button id="finalize-sale">Finalizar Venta</button>
@@ -51,39 +41,17 @@
     // Renderizar productos en el stock
     function renderSalesStock() {
       const salesList = document.getElementById('sales-stock');
-      const productSelect = document.getElementById('product-select');
 
       salesList.innerHTML = '';
-      productSelect.innerHTML = '<option value="">Seleccione un producto</option>';
 
       salesStock.forEach((item, index) => {
         const li = document.createElement('li');
         li.innerHTML = `
           ${item.name} - ${item.quantity} unidades disponibles - $${item.price}
-          <button onclick="editProduct(${index})">Editar</button>
-          <button onclick="deleteProduct(${index})">Eliminar</button>
         `;
         salesList.appendChild(li);
-
-        const option = document.createElement('option');
-        option.value = index;
-        option.textContent = item.name;
-        productSelect.appendChild(option);
       });
     }
-
-    // Agregar producto
-    document.getElementById('add-product-form').addEventListener('submit', function(event) {
-      event.preventDefault();
-      const name = document.getElementById('product-name').value;
-      const price = parseFloat(document.getElementById('product-price').value);
-      const quantity = parseInt(document.getElementById('product-quantity').value);
-
-      salesStock.push({ name, price, quantity });
-      localStorage.setItem('salesStock', JSON.stringify(salesStock));
-      renderSalesStock();
-      event.target.reset();
-    });
 
     // Renderizar carrito
     function renderCart() {
@@ -99,41 +67,32 @@
         const li = document.createElement('li');
         li.innerHTML = `
           ${item.name} - ${item.quantity} unidades a $${item.price} c/u
-          <button onclick="removeFromCart(${index})">Eliminar</button>
         `;
         cartList.appendChild(li);
       });
     }
 
-    // Añadir producto al carrito
-    document.getElementById('add-to-cart').addEventListener('click', function () {
-      const productIndex = document.getElementById('product-select').value;
-      const saleQuantity = parseInt(document.getElementById('sale-quantity').value);
-
-      const selectedProduct = salesStock[productIndex];
-      cart.push({
-        name: selectedProduct.name,
-        price: selectedProduct.price,
-        quantity: saleQuantity,
-      });
-
-      renderCart();
-    });
-
     // Finalizar venta
     document.getElementById('finalize-sale').addEventListener('click', function () {
+      if (cart.length === 0) {
+        alert('El carrito está vacío.');
+        return;
+      }
+
       const totalAmount = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+      const saleId = `order-${Date.now()}`;
 
       salesHistory.push({
-        id: `order-${Date.now()}`,
+        id: saleId,
         totalAmount,
         date: new Date().toLocaleString(),
         items: [...cart],
       });
 
-      cart = [];
       localStorage.setItem('salesHistory', JSON.stringify(salesHistory));
-      renderCart();
+
+      alert(`Venta registrada exitosamente. ID de la venta: ${saleId}`);
+      window.location.href = `boleta.html?id=${saleId}`; // Redirigir a la boleta
     });
 
     renderSalesStock();
