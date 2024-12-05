@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Historial de Ventas</title>
   <link rel="stylesheet" href="styles.css">
-  
   <link rel="stylesheet" href="history.css">
 </head>
 <body>
@@ -28,26 +27,28 @@
   <script>
     const salesHistory = JSON.parse(localStorage.getItem('salesHistory')) || [];
 
-    
+    // Renderizar el historial de ventas
     function renderSalesHistory() {
-  const salesList = document.getElementById('sales-history-list');
-  salesList.innerHTML = '';
+      const salesList = document.getElementById('sales-history-list');
+      salesList.innerHTML = '';
 
-  if (salesHistory.length === 0) {
-    salesList.innerHTML = '<li>No hay ventas registradas.</li>';
-    return;
-  }
+      if (salesHistory.length === 0) {
+        salesList.innerHTML = '<li>No hay ventas registradas.</li>';
+        return;
+      }
 
-  salesHistory.forEach((sale, index) => {
-    const li = document.createElement('li');
-    li.innerHTML = `
-      Monto Total: $${sale.totalAmount.toFixed(2)} - Fecha: ${sale.date}
-      <a href="boleta.html?id=${index}">Ver Boleta</a>
-    `;
-    salesList.appendChild(li);
-  });
-}
+      salesHistory.forEach((sale, index) => {
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <strong>Monto Total:</strong> $${sale.finalAmount.toFixed(2)} <br>
+          <strong>Fecha:</strong> ${sale.date} <br>
+          <a href="boleta.html?id=${index}">Ver Boleta</a>
+        `;
+        salesList.appendChild(li);
+      });
+    }
 
+    // Limpiar el historial de ventas
     document.getElementById('clear-history').addEventListener('click', function() {
       if (confirm('¿Estás seguro de que deseas limpiar el historial de ventas?')) {
         localStorage.removeItem('salesHistory');
