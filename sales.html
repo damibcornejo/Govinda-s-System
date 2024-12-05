@@ -11,7 +11,7 @@
   <header>
     <h1>Gestión de Ventas</h1>
     <nav>
-      <a href="menu_vendedor.html">Volver al Menú del Vendedor</a>
+      <a href="menu.html">Volver al Menú</a>
     </nav>
   </header>
   <main>
@@ -27,39 +27,52 @@
         <button type="submit">Agregar Producto</button>
       </form>
 
-      <form id="register-sale-form">
-        <h3>Registrar Venta</h3>
-        <label for="product-select">Producto:</label>
-        <select id="product-select" required>
-          <option value="">Seleccione un producto</option>
-        </select>
-        <input type="number" id="sale-quantity" placeholder="Cantidad vendida" required>
-        <button type="button" id="add-to-cart">Añadir al Carrito</button>
-      </form>
+    <form id="register-sale-form">
+      <h3>Registrar Venta</h3>
+      <label for="product-select">Producto:</label>
+      <select id="product-select" required>
+        <option value="">Seleccione un producto</option>
+      </select>
+      <input type="number" id="sale-quantity" placeholder="Cantidad vendida" required>
+      <button type="button" id="add-to-cart">Añadir al Carrito</button>
+    </form>
 
-      <h3>Carrito de Pedido</h3>
-      <ul id="cart-list"></ul>
-      <button id="finalize-sale">Finalizar Venta</button>
+    <h3>Carrito de Pedido</h3>
+    <ul id="cart-list"></ul>
+
+    <!-- Campo de Propina -->
+    <div>
+      <label for="tip">Propina:</label>
+      <input type="number" id="tip" placeholder="Ingrese monto de propina" value="0" min="0">
+      <p id="tip-amount">Propina sugerida: $0.00</p>
+    </div>
+
+    <button id="finalize-sale">Finalizar Venta</button>
     </section>
   </main>
 
   <script>
     let salesStock = JSON.parse(localStorage.getItem('salesStock')) || [];
     let salesHistory = JSON.parse(localStorage.getItem('salesHistory')) || [];
-    let cart = []; // Carrito temporal
 
-    // Funciones para renderizar productos y carrito
+    // Función para renderizar la lista de productos para venta
     function renderSalesStock() {
       const salesList = document.getElementById('sales-stock');
       const productSelect = document.getElementById('product-select');
+
       salesList.innerHTML = '';
       productSelect.innerHTML = '<option value="">Seleccione un producto</option>';
 
       salesStock.forEach((item, index) => {
         const li = document.createElement('li');
-        li.innerHTML = `${item.name} - ${item.quantity} unidades disponibles - $${item.price}`;
+        li.innerHTML = `
+          ${item.name} - ${item.quantity} unidades disponibles - $${item.price}
+          <button onclick="editProduct(${index})">Editar</button>
+          <button onclick="deleteProduct(${index})">Eliminar</button>
+        `;
         salesList.appendChild(li);
 
+        // Agregar el producto al desplegable para ventas
         const option = document.createElement('option');
         option.value = index;
         option.textContent = item.name;
@@ -67,22 +80,58 @@
       });
     }
 
-    function renderCart() {
-      const cartList = document.getElementById('cart-list');
-      cartList.innerHTML = '';
-      if (cart.length === 0) {
-        cartList.innerHTML = '<li>El carrito está vacío.</li>';
+    // Función para agregar un nuevo producto al stock
+    document.getElementById('add-product-form').addEventListener('submit', function(event) {
+      event.preventDefault();
+      const name = document.getElementById('product-name').value;
+      const price = parseFloat(document.getElementById('product-price').value);
+      const quantity = parseInt(document.getElementById('product-quantity').value);
+
+      if (!name || isNaN(price) || isNaN(quantity) || price <= 0 || quantity <= 0) {
+        alert('Por favor, complete los campos correctamente.');
         return;
       }
-      cart.forEach((item, index) => {
-        const li = document.createElement('li');
-        li.innerHTML = `${item.name} - ${item.quantity} unidades a $${item.price} c/u
-          <button onclick="removeFromCart(${index})">Eliminar</button>`;
-        cartList.appendChild(li);
-      });
-    }
 
-    // Eventos para agregar productos al carrito y finalizar la venta
+      salesStock.push({ name, price, quantity });
+      localStorage.setItem('salesStock', JSON.stringify(salesStock));
+      renderSalesStock();
+      event.target.reset();
+    });
+
+    // Función para registrar una venta
+    document.getElementById('register-sale-form').addEventListener('submit', function(event) {
+      event.preventDefault();
+      const productIndex = document.getElementById('product-select').value;
+      const saleQuantity = parseInt(document.getElementById('sale-quantity').value);
+
+      if (productIndex === '' || isNaN(saleQuantity) || saleQuantity <= 0) {
+        alert('Seleccione un producto y una cantidad válida.');
+        return;
+      }
+
+      const selectedProduct = salesStock[productIndex];
+      if (saleQuantity > selectedProduct.quantity) {
+        alert('Cantidad insuficiente en el stock.');
+        return;
+      }
+
+      selectedProduct.quantity -= saleQuantity;
+      salesHistory.push({
+        name: selectedProduct.name,
+        quantity: saleQuantity,
+        price: selectedProduct.price,
+        date: new Date().toLocaleString(),
+      });
+
+      localStorage.setItem('salesStock', JSON.stringify(salesStock));
+      localStorage.setItem('salesHistory', JSON.stringify(salesHistory));
+      renderSalesStock();
+      alert('Venta registrada exitosamente.');
+      event.target.reset();
+    });
+
+    // Agregar productos al carrito
+    let cart = []; // Carrito temporal
     document.getElementById('add-to-cart').addEventListener('click', function () {
       const productIndex = document.getElementById('product-select').value;
       const saleQuantity = parseInt(document.getElementById('sale-quantity').value);
@@ -109,49 +158,75 @@
       renderCart();
     });
 
+    // Renderizar el carrito
+    function renderCart() {
+      const cartList = document.getElementById('cart-list');
+      cartList.innerHTML = '';
+
+      if (cart.length === 0) {
+        cartList.innerHTML = '<li>El carrito está vacío.</li>';
+        return;
+      }
+
+      cart.forEach((item, index) => {
+        const li = document.createElement('li');
+        li.innerHTML = `
+          ${item.name} - ${item.quantity} unidades a $${item.price} c/u
+          <button onclick="removeFromCart(${index})">Eliminar</button>
+        `;
+        cartList.appendChild(li);
+      });
+    }
+
+    // Eliminar un producto del carrito
     function removeFromCart(index) {
       cart.splice(index, 1);
       renderCart();
     }
 
+    // Función para calcular y mostrar la propina
+    function calculateTip() {
+      const totalAmount = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+      const tipInput = document.getElementById('tip');
+      const tipAmount = parseFloat(tipInput.value) || (totalAmount * 0.1); // 10% por defecto
+
+      const totalWithTip = totalAmount + tipAmount;
+      document.getElementById('tip-amount').textContent = `Propina: $${tipAmount.toFixed(2)}`;
+      return totalWithTip;
+    }
+
+    // Finalizar la venta
     document.getElementById('finalize-sale').addEventListener('click', function () {
       if (cart.length === 0) {
         alert('El carrito está vacío.');
         return;
       }
 
-      const totalAmount = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-      const saleId = `order-${Date.now()}`;
-
+      const finalAmount = calculateTip();
       salesHistory.push({
-        id: saleId,
-        totalAmount,
+        totalAmount: finalAmount,
         date: new Date().toLocaleString(),
+        tip: parseFloat(document.getElementById('tip').value) || 0,
         items: [...cart],
       });
 
-      cart.forEach(item => {
-        const product = salesStock.find(p => p.name === item.name);
+      // Actualizar el stock
+      cart.forEach((item) => {
+        const product = salesStock.find((p) => p.name === item.name);
         product.quantity -= item.quantity;
       });
 
-      localStorage.setItem('salesStock', JSON.stringify(salesStock));
       localStorage.setItem('salesHistory', JSON.stringify(salesHistory));
+      localStorage.setItem('salesStock', JSON.stringify(salesStock));
 
-      alert(`Venta registrada exitosamente. Total: $${totalAmount.toFixed(2)}`);
-      renderSalesStock();
-      cart = [];
+      cart = []; // Vaciar el carrito
+      alert(`Venta registrada exitosamente. Total con propina: $${finalAmount.toFixed(2)}`);
       renderCart();
-
-      // Mostrar opción para consultar boleta
-      const consultReceipt = confirm('¿Desea consultar la boleta?');
-      if (consultReceipt) {
-        window.location.href = `boleta.html?id=${saleId}`;
-      }
+      renderSalesStock();
     });
 
+    // Renderizar los productos al cargar la página
     renderSalesStock();
-    renderCart();
   </script>
 </body>
 </html>
