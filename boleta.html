@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Boleta</title>
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="boleta.css">
 </head>
 <body>
   <header>
@@ -25,16 +26,16 @@
   </main>
 
   <script>
-    // Obtener índice de la boleta desde la URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const saleIndex = urlParams.get('id');
+    // Obtener el historial de ventas desde localStorage
     const salesHistory = JSON.parse(localStorage.getItem('salesHistory')) || [];
-
-    if (saleIndex !== null && salesHistory[saleIndex]) {
-      const sale = salesHistory[saleIndex];
-      renderReceipt(sale);
+    
+    // Si no hay ventas registradas
+    if (salesHistory.length === 0) {
+      document.getElementById('receipt-details').innerHTML = '<p>No hay ventas registradas.</p>';
     } else {
-      document.getElementById('receipt-details').innerHTML = '<p>No se encontró la boleta.</p>';
+      // Mostrar la última venta realizada
+      const lastSale = salesHistory[salesHistory.length - 1];
+      renderReceipt(lastSale);
     }
 
     // Función para renderizar la boleta
@@ -42,9 +43,9 @@
       const receiptDetails = document.getElementById('receipt-details');
       let html = `
         <p><strong>Fecha:</strong> ${sale.date}</p>
-        <p><strong>Monto Total:</strong> ${sale.totalAmount.toLocaleString('es-CL', { style: 'currency', currency: 'CLP' })}</p>
-        <p><strong>Propina:</strong> ${sale.tip.toLocaleString('es-CL', { style: 'currency', currency: 'CLP' })}</p>
-        <p><strong>Total con Propina:</strong> ${sale.finalAmount.toLocaleString('es-CL', { style: 'currency', currency: 'CLP' })}</p>
+        <p><strong>Monto Total:</strong> $${sale.totalAmount.toFixed(2)}</p>
+        <p><strong>Propina:</strong> $${sale.tip.toFixed(2)}</p>
+        <p><strong>Total con Propina:</strong> $${sale.finalAmount.toFixed(2)}</p>
         <h3>Productos Vendidos:</h3>
         <ul>
       `;
@@ -52,8 +53,8 @@
       sale.items.forEach(item => {
         html += `
           <li>
-            ${item.name} - ${item.quantity} unidades a ${item.price.toLocaleString('es-CL', { style: 'currency', currency: 'CLP' })} c/u
-            <br>Total: ${(item.quantity * item.price).toLocaleString('es-CL', { style: 'currency', currency: 'CLP' })}
+            ${item.name} - ${item.quantity} unidades a $${item.price.toFixed(2)} c/u
+            <br>Total: $${(item.quantity * item.price).toFixed(2)}
           </li>
         `;
       });
