@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<! -- y se cierra con -->
 <html lang="es">
 <head>
   <meta charset="UTF-8">
@@ -12,7 +11,7 @@
   <header>
     <h1>Gestión de Ventas</h1>
     <nav>
-      <a href="menu.html">Volver al Menú</a>
+      <a href="menu_vendedor.html">Volver al Menú del Vendedor</a>
     </nav>
   </header>
   <main>
@@ -26,6 +25,16 @@
         <input type="number" id="product-price" placeholder="Precio unitario" required>
         <input type="number" id="product-quantity" placeholder="Cantidad inicial" required>
         <button type="submit">Agregar Producto</button>
+      </form>
+
+      <form id="register-sale-form">
+        <h3>Registrar Venta</h3>
+        <label for="product-select">Producto:</label>
+        <select id="product-select" required>
+          <option value="">Seleccione un producto</option>
+        </select>
+        <input type="number" id="sale-quantity" placeholder="Cantidad vendida" required>
+        <button type="button" id="add-to-cart">Añadir al Carrito</button>
       </form>
 
       <h3>Carrito de Pedido</h3>
@@ -42,15 +51,20 @@
     // Renderizar productos en el stock
     function renderSalesStock() {
       const salesList = document.getElementById('sales-stock');
+      const productSelect = document.getElementById('product-select');
 
       salesList.innerHTML = '';
+      productSelect.innerHTML = '<option value="">Seleccione un producto</option>';
 
       salesStock.forEach((item, index) => {
         const li = document.createElement('li');
-        li.innerHTML = `
-          ${item.name} - ${item.quantity} unidades disponibles - $${item.price}
-        `;
+        li.innerHTML = `${item.name} - ${item.quantity} unidades disponibles - $${item.price}`;
         salesList.appendChild(li);
+
+        const option = document.createElement('option');
+        option.value = index;
+        option.textContent = item.name;
+        productSelect.appendChild(option);
       });
     }
 
@@ -68,9 +82,43 @@
         const li = document.createElement('li');
         li.innerHTML = `
           ${item.name} - ${item.quantity} unidades a $${item.price} c/u
+          <button onclick="removeFromCart(${index})">Eliminar</button>
         `;
         cartList.appendChild(li);
       });
+    }
+
+    // Agregar productos al carrito
+    document.getElementById('add-to-cart').addEventListener('click', function () {
+      const productIndex = document.getElementById('product-select').value;
+      const saleQuantity = parseInt(document.getElementById('sale-quantity').value);
+
+      if (productIndex === '' || isNaN(saleQuantity) || saleQuantity <= 0) {
+        alert('Seleccione un producto y una cantidad válida.');
+        return;
+      }
+
+      const selectedProduct = salesStock[productIndex];
+      if (saleQuantity > selectedProduct.quantity) {
+        alert('Cantidad insuficiente en el stock.');
+        return;
+      }
+
+      cart.push({
+        name: selectedProduct.name,
+        price: selectedProduct.price,
+        quantity: saleQuantity,
+      });
+
+      alert('Producto añadido al carrito.');
+      document.getElementById('register-sale-form').reset();
+      renderCart();
+    });
+
+    // Eliminar un producto del carrito
+    function removeFromCart(index) {
+      cart.splice(index, 1);
+      renderCart();
     }
 
     // Finalizar venta
@@ -90,13 +138,24 @@
         items: [...cart],
       });
 
+      cart.forEach(item => {
+        const product = salesStock.find(p => p.name === item.name);
+        product.quantity -= item.quantity;
+      });
+
+      localStorage.setItem('salesStock', JSON.stringify(salesStock));
       localStorage.setItem('salesHistory', JSON.stringify(salesHistory));
 
-      alert(`Venta registrada exitosamente. ID de la venta: ${saleId}`);
-      window.location.href = `boleta.html?id=${saleId}`; // Redirigir a la boleta
+      alert(`Venta registrada exitosamente. Total: $${totalAmount.toFixed(2)}`);
+      renderSalesStock();
+      cart = [];
+      renderCart();
+      window.location.href = `boleta.html?id=${saleId}`;
     });
 
+    // Renderizar productos al cargar la página
     renderSalesStock();
+    renderCart();
   </script>
 </body>
 </html>
