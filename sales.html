@@ -27,29 +27,28 @@
         <button type="submit">Agregar Producto</button>
       </form>
 
-    <form id="register-sale-form">
-  <h3>Registrar Venta</h3>
-  <label for="product-select">Producto:</label>
-  <select id="product-select" required>
-    <option value="">Seleccione un producto</option>
-  </select>
-  <input type="number" id="sale-quantity" placeholder="Cantidad vendida" required>
-  <button type="button" id="add-to-cart">Añadir al Carrito</button>
-</form>
+      <form id="register-sale-form">
+        <h3>Registrar Venta</h3>
+        <label for="product-select">Producto:</label>
+        <select id="product-select" required>
+          <option value="">Seleccione un producto</option>
+        </select>
+        <input type="number" id="sale-quantity" placeholder="Cantidad vendida" required>
+        <button type="button" id="add-to-cart">Añadir al Carrito</button>
+      </form>
 
-<h3>Carrito de Pedido</h3>
-<ul id="cart-list"></ul>
-<button id="finalize-sale">Finalizar Venta</button>
-
-
+      <h3>Carrito de Pedido</h3>
+      <ul id="cart-list"></ul>
+      <button id="finalize-sale">Finalizar Venta</button>
     </section>
   </main>
 
   <script>
     let salesStock = JSON.parse(localStorage.getItem('salesStock')) || [];
     let salesHistory = JSON.parse(localStorage.getItem('salesHistory')) || [];
+    let cart = []; // Carrito temporal
 
-    // Función para renderizar la lista de productos para venta
+    // Renderizar productos en el stock
     function renderSalesStock() {
       const salesList = document.getElementById('sales-stock');
       const productSelect = document.getElementById('product-select');
@@ -66,7 +65,6 @@
         `;
         salesList.appendChild(li);
 
-        // Agregar el producto al desplegable para ventas
         const option = document.createElement('option');
         option.value = index;
         option.textContent = item.name;
@@ -74,17 +72,12 @@
       });
     }
 
-    // Función para agregar un nuevo producto al stock
+    // Agregar producto
     document.getElementById('add-product-form').addEventListener('submit', function(event) {
       event.preventDefault();
       const name = document.getElementById('product-name').value;
       const price = parseFloat(document.getElementById('product-price').value);
       const quantity = parseInt(document.getElementById('product-quantity').value);
-
-      if (!name || isNaN(price) || isNaN(quantity) || price <= 0 || quantity <= 0) {
-        alert('Por favor, complete los campos correctamente.');
-        return;
-      }
 
       salesStock.push({ name, price, quantity });
       localStorage.setItem('salesStock', JSON.stringify(salesStock));
@@ -92,152 +85,57 @@
       event.target.reset();
     });
 
-    // Función para registrar una venta
-    document.getElementById('register-sale-form').addEventListener('submit', function(event) {
-      event.preventDefault();
+    // Renderizar carrito
+    function renderCart() {
+      const cartList = document.getElementById('cart-list');
+      cartList.innerHTML = '';
+
+      if (cart.length === 0) {
+        cartList.innerHTML = '<li>El carrito está vacío.</li>';
+        return;
+      }
+
+      cart.forEach((item, index) => {
+        const li = document.createElement('li');
+        li.innerHTML = `
+          ${item.name} - ${item.quantity} unidades a $${item.price} c/u
+          <button onclick="removeFromCart(${index})">Eliminar</button>
+        `;
+        cartList.appendChild(li);
+      });
+    }
+
+    // Añadir producto al carrito
+    document.getElementById('add-to-cart').addEventListener('click', function () {
       const productIndex = document.getElementById('product-select').value;
       const saleQuantity = parseInt(document.getElementById('sale-quantity').value);
 
-      if (productIndex === '' || isNaN(saleQuantity) || saleQuantity <= 0) {
-        alert('Seleccione un producto y una cantidad válida.');
-        return;
-      }
-
       const selectedProduct = salesStock[productIndex];
-      if (saleQuantity > selectedProduct.quantity) {
-        alert('Cantidad insuficiente en el stock.');
-        return;
-      }
-
-      selectedProduct.quantity -= saleQuantity;
-      salesHistory.push({
+      cart.push({
         name: selectedProduct.name,
-        quantity: saleQuantity,
         price: selectedProduct.price,
-        date: new Date().toLocaleString(),
+        quantity: saleQuantity,
       });
 
-      localStorage.setItem('salesStock', JSON.stringify(salesStock));
-      localStorage.setItem('salesHistory', JSON.stringify(salesHistory));
-      renderSalesStock();
-      alert('Venta registrada exitosamente.');
-      event.target.reset();
+      renderCart();
     });
 
-    // Función para editar un producto
-    function editProduct(index) {
-      const newQuantity = prompt("Nueva cantidad para el producto:", salesStock[index].quantity);
-      if (newQuantity && !isNaN(newQuantity)) {
-        salesStock[index].quantity = parseInt(newQuantity);
-        localStorage.setItem('salesStock', JSON.stringify(salesStock));
-        renderSalesStock();
-      }
-    }
+    // Finalizar venta
+    document.getElementById('finalize-sale').addEventListener('click', function () {
+      const totalAmount = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
-    // Función para eliminar un producto
-    function deleteProduct(index) {
-      if (confirm('¿Estás seguro de que deseas eliminar este producto?')) {
-        salesStock.splice(index, 1);
-        localStorage.setItem('salesStock', JSON.stringify(salesStock));
-        renderSalesStock();
-      }
-    }
-    let cart = []; // Carrito temporal
+      salesHistory.push({
+        id: `order-${Date.now()}`,
+        totalAmount,
+        date: new Date().toLocaleString(),
+        items: [...cart],
+      });
 
-// Renderizar el carrito
-function renderCart() {
-  const cartList = document.getElementById('cart-list');
-  cartList.innerHTML = '';
+      cart = [];
+      localStorage.setItem('salesHistory', JSON.stringify(salesHistory));
+      renderCart();
+    });
 
-  if (cart.length === 0) {
-    cartList.innerHTML = '<li>El carrito está vacío.</li>';
-    return;
-  }
-
-  cart.forEach((item, index) => {
-    const li = document.createElement('li');
-    li.innerHTML = `
-      ${item.name} - ${item.quantity} unidades a $${item.price} c/u
-      <button onclick="removeFromCart(${index})">Eliminar</button>
-    `;
-    cartList.appendChild(li);
-  });
-}
-
-// Agregar productos al carrito
-document.getElementById('add-to-cart').addEventListener('click', function () {
-  const productIndex = document.getElementById('product-select').value;
-  const saleQuantity = parseInt(document.getElementById('sale-quantity').value);
-
-  if (productIndex === '' || isNaN(saleQuantity) || saleQuantity <= 0) {
-    alert('Seleccione un producto y una cantidad válida.');
-    return;
-  }
-
-  const selectedProduct = salesStock[productIndex];
-  if (saleQuantity > selectedProduct.quantity) {
-    alert('Cantidad insuficiente en el stock.');
-    return;
-  }
-
-  cart.push({
-    name: selectedProduct.name,
-    price: selectedProduct.price,
-    quantity: saleQuantity,
-  });
-
-  alert('Producto añadido al carrito.');
-  document.getElementById('register-sale-form').reset();
-  renderCart();
-});
-
-// Eliminar un producto del carrito
-function removeFromCart(index) {
-  cart.splice(index, 1);
-  renderCart();
-}
-
-document.getElementById('finalize-sale').addEventListener('click', function () {
-  if (cart.length === 0) {
-    alert('El carrito está vacío.');
-    return;
-  }
-
-  const totalAmount = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const tip = parseFloat(prompt('Ingrese el monto de propina (deje vacío si no desea agregar):', '0')) || 0;
-
-  if (tip < 0) {
-    alert('La propina no puede ser negativa.');
-    return;
-  }
-
-  const finalAmount = totalAmount + tip;
-
-  salesHistory.push({
-    totalAmount: finalAmount,
-    date: new Date().toLocaleString(),
-    tip: tip,
-    items: [...cart], // Detalles de los productos vendidos
-  });
-
-  // Actualizar el stock
-  cart.forEach((item) => {
-    const product = salesStock.find((p) => p.name === item.name);
-    product.quantity -= item.quantity;
-  });
-
-  localStorage.setItem('salesHistory', JSON.stringify(salesHistory));
-  localStorage.setItem('salesStock', JSON.stringify(salesStock));
-
-  cart = []; // Vaciar el carrito
-  alert(`Venta registrada exitosamente. Total con propina: $${finalAmount.toFixed(2)}`);
-  renderCart();
-  renderSalesStock();
-});
-
-
-
-    // Renderizar los productos al cargar la página
     renderSalesStock();
   </script>
 </body>
