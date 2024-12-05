@@ -43,9 +43,9 @@
       const receiptDetails = document.getElementById('receipt-details');
       let html = `
         <p><strong>Fecha:</strong> ${sale.date}</p>
-        <p><strong>Monto Total:</strong> $${sale.totalAmount.toFixed(2)}</p>
-        <p><strong>Propina:</strong> $${sale.tip.toFixed(2)}</p>
-        <p><strong>Total con Propina:</strong> $${sale.finalAmount.toFixed(2)}</p>
+        <p><strong>Monto Total:</strong> $${sale.totalAmount.toLocaleString('es-CL', { style: 'currency', currency: 'CLP' })}</p>
+        <p><strong>Propina:</strong> $${sale.tip.toLocaleString('es-CL', { style: 'currency', currency: 'CLP' })}</p>
+        <p><strong>Total con Propina:</strong> $${sale.finalAmount.toLocaleString('es-CL', { style: 'currency', currency: 'CLP' })}</p>
         <h3>Productos Vendidos:</h3>
         <ul>
       `;
