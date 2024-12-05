@@ -27,16 +27,7 @@
         <button type="submit">Agregar Producto</button>
       </form>
 
-      <form id="register-sale-form">
-        <h3>Registrar Venta</h3>
-        <label for="product-select">Producto:</label>
-        <select id="product-select" required>
-          <option value="">Seleccione un producto</option>
-        </select>
-        <input type="number" id="sale-quantity" placeholder="Cantidad vendida" required>
-        <button type="submit">Registrar Venta</button>
-      </form>
-      <form id="register-sale-form">
+    <form id="register-sale-form">
   <h3>Registrar Venta</h3>
   <label for="product-select">Producto:</label>
   <select id="product-select" required>
@@ -49,6 +40,7 @@
 <h3>Carrito de Pedido</h3>
 <ul id="cart-list"></ul>
 <button id="finalize-sale">Finalizar Venta</button>
+
 
     </section>
   </main>
@@ -205,18 +197,27 @@ function removeFromCart(index) {
   renderCart();
 }
 
-// Finalizar la venta
 document.getElementById('finalize-sale').addEventListener('click', function () {
   if (cart.length === 0) {
     alert('El carrito está vacío.');
     return;
   }
 
- const totalAmount = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const totalAmount = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const tip = parseFloat(prompt('Ingrese el monto de propina (deje vacío si no desea agregar):', '0')) || 0;
+
+  if (tip < 0) {
+    alert('La propina no puede ser negativa.');
+    return;
+  }
+
+  const finalAmount = totalAmount + tip;
+
   salesHistory.push({
-    totalAmount: totalAmount,
+    totalAmount: finalAmount,
     date: new Date().toLocaleString(),
-    items: [...cart], // Guardar el detalle de los productos vendidos
+    tip: tip,
+    items: [...cart], // Detalles de los productos vendidos
   });
 
   // Actualizar el stock
@@ -229,10 +230,11 @@ document.getElementById('finalize-sale').addEventListener('click', function () {
   localStorage.setItem('salesStock', JSON.stringify(salesStock));
 
   cart = []; // Vaciar el carrito
-  alert('Venta registrada exitosamente.');
+  alert(`Venta registrada exitosamente. Total con propina: $${finalAmount.toFixed(2)}`);
   renderCart();
-  renderSalesStock(); // Actualizar el inventario
+  renderSalesStock();
 });
+
 
 
     // Renderizar los productos al cargar la página
