@@ -48,11 +48,10 @@
     let salesHistory = JSON.parse(localStorage.getItem('salesHistory')) || [];
     let cart = []; // Carrito temporal
 
-    // Renderizar productos en el stock
+    // Funciones para renderizar productos y carrito
     function renderSalesStock() {
       const salesList = document.getElementById('sales-stock');
       const productSelect = document.getElementById('product-select');
-
       salesList.innerHTML = '';
       productSelect.innerHTML = '<option value="">Seleccione un producto</option>';
 
@@ -68,27 +67,22 @@
       });
     }
 
-    // Renderizar carrito
     function renderCart() {
       const cartList = document.getElementById('cart-list');
       cartList.innerHTML = '';
-
       if (cart.length === 0) {
         cartList.innerHTML = '<li>El carrito está vacío.</li>';
         return;
       }
-
       cart.forEach((item, index) => {
         const li = document.createElement('li');
-        li.innerHTML = `
-          ${item.name} - ${item.quantity} unidades a $${item.price} c/u
-          <button onclick="removeFromCart(${index})">Eliminar</button>
-        `;
+        li.innerHTML = `${item.name} - ${item.quantity} unidades a $${item.price} c/u
+          <button onclick="removeFromCart(${index})">Eliminar</button>`;
         cartList.appendChild(li);
       });
     }
 
-    // Agregar productos al carrito
+    // Eventos para agregar productos al carrito y finalizar la venta
     document.getElementById('add-to-cart').addEventListener('click', function () {
       const productIndex = document.getElementById('product-select').value;
       const saleQuantity = parseInt(document.getElementById('sale-quantity').value);
@@ -115,13 +109,11 @@
       renderCart();
     });
 
-    // Eliminar un producto del carrito
     function removeFromCart(index) {
       cart.splice(index, 1);
       renderCart();
     }
 
-    // Finalizar venta
     document.getElementById('finalize-sale').addEventListener('click', function () {
       if (cart.length === 0) {
         alert('El carrito está vacío.');
@@ -150,10 +142,14 @@
       renderSalesStock();
       cart = [];
       renderCart();
-      window.location.href = `boleta.html?id=${saleId}`;
+
+      // Mostrar opción para consultar boleta
+      const consultReceipt = confirm('¿Desea consultar la boleta?');
+      if (consultReceipt) {
+        window.location.href = `boleta.html?id=${saleId}`;
+      }
     });
 
-    // Renderizar productos al cargar la página
     renderSalesStock();
     renderCart();
   </script>
