@@ -57,29 +57,33 @@ header h1 {
   text-decoration: none;
   font-size: 18px;
   color: #333;
-  transition: color 0.3s ease;
+  background-color: #fff; /* Fondo blanco para mayor visibilidad */
+  padding: 10px 15px; /* Espaciado extra */
+  border-radius: 5px; /* Bordes redondeados */
+  display: inline-block; /* Asegura que ocupe el espacio esperado */
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .menu ul li a:hover {
-  color: #C1C5C9;
+  color: #fff; /* Cambia el texto a blanco */
+  background-color: #4a90e2; /* Cambia el fondo al color principal */
 }
 
 /* Menú del Administrador */
 .admin-menu {
-  background-color: #F7F2F1;//blanco
-  border: 2px solid #64E464;//verde mas oscuro
+  background-color: #F7F2F1; /* Blanco */
+  border: 2px solid #64E464; /* Verde más oscuro */
 }
 
 /* Menú del Vendedor */
 .seller-menu {
-  background-color: #F7F2F1;//blanco
-  border: 2px solid #A955C1;//moradito oscuro
+  background-color: #F7F2F1; /* Blanco */
+  border: 2px solid #A955C1; /* Morado oscuro */
 }
 
 /* Botón de Cerrar Sesión */
 .logout-btn {
   background-color: #4a90e2;
-  display:flex;
   color: white;
   border: none;
   border-radius: 8px;
@@ -87,14 +91,10 @@ header h1 {
   font-size: 16px;
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.2s ease;
+  margin-top: 20px;
 }
 
 .logout-btn:hover {
-  background-color: #4a90e2;
+  background-color: #357ABD; /* Azul más oscuro */
   transform: scale(1.05);
-}
-
-/* Ajuste de márgenes para el botón */
-.logout-btn {
-  margin-top: 20px;
 }
