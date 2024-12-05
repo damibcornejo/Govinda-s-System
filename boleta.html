@@ -29,23 +29,23 @@
     // Obtener el historial de ventas desde localStorage
     const salesHistory = JSON.parse(localStorage.getItem('salesHistory')) || [];
 
-    // Crear un objeto de venta de ejemplo (en la práctica, esto vendrá de tu sistema de ventas)
+    // Crear un objeto de venta simulado (en la práctica, este dato se genera dinámicamente)
     const currentSale = {
       date: new Date().toLocaleString(),
-      totalAmount: 100, // monto total
-      tip: 10, // propina
-      finalAmount: 110, // total con propina
+      totalAmount: 120.00, // monto total
+      tip: 10.00,          // propina
+      finalAmount: 130.00, // total con propina
       items: [
-        { name: 'Producto 1', quantity: 2, price: 20 },
-        { name: 'Producto 2', quantity: 1, price: 60 }
+        { name: 'Producto A', quantity: 2, price: 50.00 },
+        { name: 'Producto B', quantity: 1, price: 20.00 }
       ]
     };
 
-    // Guardar la venta actual en el historial
+    // Agregar la venta actual al historial y guardarla en localStorage
     salesHistory.push(currentSale);
     localStorage.setItem('salesHistory', JSON.stringify(salesHistory));
 
-    // Mostrar la venta actual en la boleta
+    // Renderizar la venta actual en la boleta
     renderReceipt(currentSale);
 
     // Función para renderizar la boleta
@@ -75,4 +75,3 @@
   </script>
 </body>
 </html>
-
