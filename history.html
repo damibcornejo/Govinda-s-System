@@ -28,23 +28,25 @@
   <script>
     const salesHistory = JSON.parse(localStorage.getItem('salesHistory')) || [];
 
+    
     function renderSalesHistory() {
-      const salesList = document.getElementById('sales-history-list');
-      salesList.innerHTML = '';
+  const salesList = document.getElementById('sales-history-list');
+  salesList.innerHTML = '';
 
-      if (salesHistory.length === 0) {
-        salesList.innerHTML = '<li>No hay ventas registradas.</li>';
-        return;
-      }
+  if (salesHistory.length === 0) {
+    salesList.innerHTML = '<li>No hay ventas registradas.</li>';
+    return;
+  }
 
-      salesHistory.forEach((sale, index) => {
-        const li = document.createElement('li');
-        li.innerHTML = `
-          Producto: ${sale.name} - Cantidad: ${sale.quantity} - Precio Total: $${(sale.quantity * sale.price).toFixed(2)} - Fecha: ${sale.date}
-        `;
-        salesList.appendChild(li);
-      });
-    }
+  salesHistory.forEach((sale, index) => {
+    const li = document.createElement('li');
+    li.innerHTML = `
+      Monto Total: $${sale.totalAmount.toFixed(2)} - Fecha: ${sale.date}
+      <a href="boleta.html?id=${index}">Ver Boleta</a>
+    `;
+    salesList.appendChild(li);
+  });
+}
 
     document.getElementById('clear-history').addEventListener('click', function() {
       if (confirm('¿Estás seguro de que deseas limpiar el historial de ventas?')) {
