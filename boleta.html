@@ -11,45 +11,47 @@
   <header>
     <h1>Boleta de Venta</h1>
     <nav>
-      <a href="menu.html">Volver al Menú</a>
+      <a href="ventas.html">Volver a Ventas</a>
     </nav>
   </header>
   <main>
     <section>
-      <h2>Detalle del Pedido</h2>
+      <h2>Detalle de la Boleta</h2>
       <div id="receipt-details">
-        <!-- Aquí se renderizarán los detalles de la boleta -->
+        <!-- Aquí se renderizan los detalles de la boleta -->
       </div>
     </section>
   </main>
 
   <script>
-    const params = new URLSearchParams(window.location.search);
-    const orderId = params.get('id');
+    // Obtener el historial de ventas desde localStorage
     const salesHistory = JSON.parse(localStorage.getItem('salesHistory')) || [];
-
-    const order = salesHistory.find(order => order.id === orderId);
-
-    if (!order) {
-      document.getElementById('receipt-details').innerHTML = '<p>Pedido no encontrado.</p>';
+    
+    // Si no hay ventas registradas
+    if (salesHistory.length === 0) {
+      document.getElementById('receipt-details').innerHTML = '<p>No hay ventas registradas.</p>';
     } else {
-      renderReceipt(order);
+      // Mostrar la última venta realizada
+      const lastSale = salesHistory[salesHistory.length - 1];
+      renderReceipt(lastSale);
     }
 
-    function renderReceipt(order) {
+    // Función para renderizar la boleta
+    function renderReceipt(sale) {
       const receiptDetails = document.getElementById('receipt-details');
-
       let html = `
-        <p><strong>Fecha:</strong> ${order.date}</p>
-        <p><strong>Monto Total:</strong> $${order.totalAmount.toFixed(2)}</p>
+        <p><strong>Fecha:</strong> ${sale.date}</p>
+        <p><strong>Monto Total:</strong> $${sale.totalAmount.toFixed(2)}</p>
+        <p><strong>Propina:</strong> $${sale.tip.toFixed(2)}</p>
+        <p><strong>Total con Propina:</strong> $${sale.finalAmount.toFixed(2)}</p>
         <h3>Productos Vendidos:</h3>
         <ul>
       `;
 
-      order.items.forEach(item => {
+      sale.items.forEach(item => {
         html += `
           <li>
-            ${item.name} - ${item.quantity} unidades a $${item.price} c/u
+            ${item.name} - ${item.quantity} unidades a $${item.price.toFixed(2)} c/u
             <br>Total: $${(item.quantity * item.price).toFixed(2)}
           </li>
         `;
