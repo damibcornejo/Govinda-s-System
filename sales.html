@@ -56,6 +56,7 @@
     let salesHistory = JSON.parse(localStorage.getItem('salesHistory')) || [];
     let cart = [];
 
+    // Renderizar productos del stock
     function renderSalesStock() {
       const salesList = document.getElementById('sales-stock');
       const productSelect = document.getElementById('product-select');
@@ -79,6 +80,7 @@
       });
     }
 
+    // Agregar producto
     document.getElementById('add-product-form').addEventListener('submit', function(event) {
       event.preventDefault();
       const name = document.getElementById('product-name').value;
@@ -96,6 +98,33 @@
       event.target.reset();
     });
 
+    // Editar producto
+    function editProduct(index) {
+      const product = salesStock[index];
+      const newName = prompt("Editar nombre del producto:", product.name) || product.name;
+      const newPrice = parseFloat(prompt("Editar precio unitario del producto:", product.price)) || product.price;
+      const newQuantity = parseInt(prompt("Editar cantidad disponible:", product.quantity)) || product.quantity;
+
+      if (isNaN(newPrice) || isNaN(newQuantity) || newPrice <= 0 || newQuantity < 0) {
+        alert('Valores inválidos. Asegúrese de ingresar valores positivos.');
+        return;
+      }
+
+      salesStock[index] = { name: newName, price: newPrice, quantity: newQuantity };
+      localStorage.setItem('salesStock', JSON.stringify(salesStock));
+      renderSalesStock();
+    }
+
+    // Eliminar producto
+    function deleteProduct(index) {
+      if (confirm('¿Estás seguro de que deseas eliminar este producto?')) {
+        salesStock.splice(index, 1);
+        localStorage.setItem('salesStock', JSON.stringify(salesStock));
+        renderSalesStock();
+      }
+    }
+
+    // Renderizar carrito
     function renderCart() {
       const cartList = document.getElementById('cart-list');
       cartList.innerHTML = cart.length === 0
@@ -108,6 +137,7 @@
         `).join('');
     }
 
+    // Añadir al carrito
     document.getElementById('add-to-cart').addEventListener('click', function () {
       const productIndex = document.getElementById('product-select').value;
       const saleQuantity = parseInt(document.getElementById('sale-quantity').value);
@@ -136,11 +166,13 @@
       document.getElementById('suggested-tip').textContent = `Propina sugerida: $${(totalAmount * 0.1).toFixed(2)}`;
     });
 
+    // Eliminar del carrito
     function removeFromCart(index) {
       cart.splice(index, 1);
       renderCart();
     }
 
+    // Finalizar venta
     document.getElementById('finalize-sale').addEventListener('click', function () {
       if (cart.length === 0) {
         alert('El carrito está vacío.');
