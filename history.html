@@ -21,25 +21,33 @@
     <ul id="sales-history"></ul>
   </main>
 
-  <script>
-    const salesHistory = JSON.parse(localStorage.getItem('salesHistory')) || [];
-    const salesList = document.getElementById('sales-history');
+ <script>
+  const salesHistory = JSON.parse(localStorage.getItem('salesHistory')) || [];
+  const salesList = document.getElementById('sales-history');
+  let totalDaySales = 0;
 
-    if (salesHistory.length === 0) {
-      salesList.innerHTML = '<p>No hay ventas registradas.</p>';
-    } else {
-      salesHistory.forEach((sale, index) => {
-        const li = document.createElement('li');
-        li.innerHTML = `
-          <p>
-            <strong>Fecha:</strong> ${sale.date} <br>
-            <strong>Total:</strong> $${sale.finalAmount.toFixed(2)} <br>
-            <a href="boleta.html?id=${index}">Ver Boleta</a>
-          </p>
-        `;
-        salesList.appendChild(li);
-      });
-    }
-  </script>
+  if (salesHistory.length === 0) {
+    salesList.innerHTML = '<p>No hay ventas registradas.</p>';
+  } else {
+    salesHistory.forEach((sale, index) => {
+      totalDaySales += sale.finalAmount;
+
+      const li = document.createElement('li');
+      li.innerHTML = `
+        <p>
+          <strong>Fecha:</strong> ${sale.date} <br>
+          <strong>Total:</strong> $${sale.finalAmount.toLocaleString('es-CL', { style: 'currency', currency: 'CLP' })} <br>
+          <a href="boleta.html?id=${index}">Ver Boleta</a>
+        </p>
+      `;
+      salesList.appendChild(li);
+    });
+
+    const totalDisplay = document.createElement('p');
+    totalDisplay.innerHTML = `<strong>Total del día:</strong> $${totalDaySales.toLocaleString('es-CL', { style: 'currency', currency: 'CLP' })}`;
+    document.body.appendChild(totalDisplay);
+  }
+</script>
+
 </body>
 </html>
