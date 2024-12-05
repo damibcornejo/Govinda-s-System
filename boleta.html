@@ -10,10 +10,6 @@
 <body>
   <header>
     <h1>Boleta de Venta</h1>
-    <nav>
-      <a href="history.html">Volver al Historial</a>
-      <a href="menu.html">Menú</a>
-    </nav>
   </header>
   <main>
     <section>
@@ -25,15 +21,11 @@
   </main>
 
   <script>
-    // Obtener el ID del pedido desde la URL
     const params = new URLSearchParams(window.location.search);
     const orderId = params.get('id');
-
-    // Obtener el historial desde el localStorage
     const salesHistory = JSON.parse(localStorage.getItem('salesHistory')) || [];
 
-    // Encontrar la boleta correspondiente
-    const order = salesHistory[orderId];
+    const order = salesHistory.find(order => order.id === orderId);
 
     if (!order) {
       document.getElementById('receipt-details').innerHTML = '<p>Pedido no encontrado.</p>';
@@ -41,7 +33,6 @@
       renderReceipt(order);
     }
 
-    // Función para renderizar la boleta
     function renderReceipt(order) {
       const receiptDetails = document.getElementById('receipt-details');
 
@@ -67,3 +58,4 @@
   </script>
 </body>
 </html>
+
