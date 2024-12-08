@@ -3,68 +3,64 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Historial de Ventas</title>
+  <title>Historial de Boletas</title>
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="history.css">
 </head>
 <body>
   <header>
-    <h1>Historial de Ventas</h1>
+    <h1>Historial de Boletas</h1>
     <nav>
       <a href="menu.html">Volver a Menú</a>
+      <a href="inventory.html">Inventario</a>
       <a href="index.html">Cerrar Sesión</a>
     </nav>
   </header>
   <main>
     <section>
-      <h2>Ventas Registradas</h2>
-      <div id="sales-history">
-        <!-- Aquí se mostrarán las boletas -->
+      <h2>Boletas Registradas</h2>
+      <div id="history-list">
+        <!-- Aquí se renderizan todas las boletas -->
       </div>
     </section>
   </main>
-
   <script>
-    // Obtener el historial de ventas desde localStorage
+    // Recuperar el historial de boletas desde localStorage
     const salesHistory = JSON.parse(localStorage.getItem('salesHistory')) || [];
-    const salesHistoryDiv = document.getElementById('sales-history');
 
-    // Si no hay ventas registradas
+    const historyList = document.getElementById('history-list');
+
     if (salesHistory.length === 0) {
-      salesHistoryDiv.innerHTML = '<p>No hay ventas registradas.</p>';
+      historyList.innerHTML = '<p>No hay boletas registradas.</p>';
     } else {
-      // Renderizar todas las boletas
-      salesHistoryDiv.innerHTML = salesHistory.map((sale, index) => renderSale(sale, index)).join('');
+      let html = '';
+      salesHistory.forEach((sale, index) => {
+        html += `
+          <div class="receipt">
+            <h3>Boleta ${index + 1}</h3>
+            <p><strong>Fecha:</strong> ${sale.date}</p>
+            <p><strong>Monto Total:</strong> ${formatCurrency(sale.totalAmount)}</p>
+            <p><strong>Propina:</strong> ${formatCurrency(sale.tip)}</p>
+            <p><strong>Total con Propina:</strong> ${formatCurrency(sale.finalAmount)}</p>
+            <h4>Productos Vendidos:</h4>
+            <ul>
+        `;
+        sale.items.forEach(item => {
+          html += `
+            <li>
+              ${item.name} - ${item.quantity} unidades a ${formatCurrency(item.price)} c/u
+              <br>Total: ${formatCurrency(item.quantity * item.price)}
+            </li>
+          `;
+        });
+        html += '</ul></div>';
+      });
+      historyList.innerHTML = html;
     }
 
-    // Función para renderizar una venta
-    function renderSale(sale, index) {
-      let html = `
-        <div class="sale">
-          <p><strong>Fecha:</strong> ${sale.date}</p>
-          <p><strong>Monto Total:</strong> $${sale.totalAmount.toFixed(2)}</p>
-          <p><strong>Propina:</strong> $${sale.tip.toFixed(2)}</p>
-          <p><strong>Total con Propina:</strong> $${sale.finalAmount.toFixed(2)}</p>
-          <h3>Productos Vendidos:</h3>
-          <ul>
-      `;
-
-      sale.items.forEach(item => {
-        html += `
-          <li>
-            ${item.name} - ${item.quantity} unidades a $${item.price.toFixed(2)} c/u
-            <br>Total: $${(item.quantity * item.price).toFixed(2)}
-          </li>
-        `;
-      });
-
-      html += `
-          </ul>
-          <a href="boleta.html?id=${index}" class="view-receipt">Ver Boleta</a>
-        </div>
-      `;
-
-      return html;
+    // Función para formatear en pesos chilenos
+    function formatCurrency(amount) {
+      return new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(amount);
     }
   </script>
 </body>
