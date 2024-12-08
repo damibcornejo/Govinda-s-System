@@ -37,6 +37,11 @@
       const lastSale = salesHistory[salesHistory.length - 1];
       renderReceipt(lastSale);
     }
+    // Agregar la venta actual al historial
+  salesHistory.push(currentSale);
+
+  // Guardar el historial actualizado en localStorage
+  localStorage.setItem('salesHistory', JSON.stringify(salesHistory));
 
     // Función para renderizar la boleta
     function renderReceipt(sale) {
