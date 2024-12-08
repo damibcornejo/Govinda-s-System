@@ -26,46 +26,46 @@
   </main>
   <script>
     // Recuperar el historial de boletas desde localStorage
-    const salesHistory = JSON.parse(localStorage.getItem('salesHistory')) || [];
-    console.log('Contenido de salesHistory:', salesHistory);
+const salesHistory = JSON.parse(localStorage.getItem('salesHistory') || '[]');
+
+// Depurar: confirma que salesHistory sea un array válido
+console.log('Contenido de salesHistory:', salesHistory);
 if (!Array.isArray(salesHistory)) {
-  console.error('salesHistory no es un array válido:', salesHistory);
+  console.error('Error: salesHistory no es un array válido.', salesHistory);
+  historyList.innerHTML = '<p>Error al cargar el historial. Por favor, recargue la página.</p>';
+} else if (salesHistory.length === 0) {
+  historyList.innerHTML = '<p>No hay boletas registradas.</p>';
+} else {
+  let html = '';
+  salesHistory.forEach((sale, index) => {
+    html += `
+      <div class="receipt">
+        <h3>Boleta ${index + 1}</h3>
+        <p><strong>Fecha:</strong> ${sale.date}</p>
+        <p><strong>Monto Total:</strong> ${formatCurrency(sale.totalAmount)}</p>
+        <p><strong>Propina:</strong> ${formatCurrency(sale.tip)}</p>
+        <p><strong>Total con Propina:</strong> ${formatCurrency(sale.finalAmount)}</p>
+        <h4>Productos Vendidos:</h4>
+        <ul>
+    `;
+    sale.items.forEach(item => {
+      html += `
+        <li>
+          ${item.name} - ${item.quantity} unidades a ${formatCurrency(item.price)} c/u
+          <br>Total: ${formatCurrency(item.quantity * item.price)}
+        </li>
+      `;
+    });
+    html += '</ul></div>';
+  });
+  historyList.innerHTML = html;
 }
 
-    const historyList = document.getElementById('history-list');
+// Función para formatear en pesos chilenos
+function formatCurrency(amount) {
+  return new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(amount);
+}
 
-    if (salesHistory.length === 0) {
-      historyList.innerHTML = '<p>No hay boletas registradas.</p>';
-    } else {
-      let html = '';
-      salesHistory.forEach((sale, index) => {
-        html += `
-          <div class="receipt">
-            <h3>Boleta ${index + 1}</h3>
-            <p><strong>Fecha:</strong> ${sale.date}</p>
-            <p><strong>Monto Total:</strong> ${formatCurrency(sale.totalAmount)}</p>
-            <p><strong>Propina:</strong> ${formatCurrency(sale.tip)}</p>
-            <p><strong>Total con Propina:</strong> ${formatCurrency(sale.finalAmount)}</p>
-            <h4>Productos Vendidos:</h4>
-            <ul>
-        `;
-        sale.items.forEach(item => {
-          html += `
-            <li>
-              ${item.name} - ${item.quantity} unidades a ${formatCurrency(item.price)} c/u
-              <br>Total: ${formatCurrency(item.quantity * item.price)}
-            </li>
-          `;
-        });
-        html += '</ul></div>';
-      });
-      historyList.innerHTML = html;
-    }
-
-    // Función para formatear en pesos chilenos
-    function formatCurrency(amount) {
-      return new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(amount);
-    }
   </script>
 </body>
 </html>
