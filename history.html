@@ -26,6 +26,7 @@
   </main>
   <script>
     // Recuperar el historial de boletas desde localStorage
+const historyList = document.getElementById('history-list');  // Aquí accedes al elemento con id "history-list"
 const salesHistory = JSON.parse(localStorage.getItem('salesHistory') || '[]');
 
 // Depurar: confirma que salesHistory sea un array válido
