@@ -29,12 +29,16 @@
     const salesHistory = JSON.parse(localStorage.getItem('salesHistory')) || [];
     const historyList = document.getElementById('history-list');
 
+    // Mostrar los datos en la consola para asegurarse de que se están recuperando correctamente
+    console.log('Historial de ventas:', salesHistory);
+
     // Crear objeto para agrupar las ventas por día
     const salesByDate = {};
 
     salesHistory.forEach(sale => {
       const saleDate = new Date(sale.date);
-      
+      console.log('Fecha de la venta:', sale.date, 'Fecha objeto:', saleDate);
+
       // Validar si la fecha es correcta
       if (saleDate.getTime()) {  // Verifica que la fecha sea válida
         const formattedDate = saleDate.toLocaleDateString();
