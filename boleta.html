@@ -5,14 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Boleta</title>
   <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet" href="boleta.css">
 </head>
 <body>
   <header>
     <h1>Boleta de Venta</h1>
     <nav>
       <a href="menu.html">Volver a Menú</a>
-      <a href="sales.html">Ventas</a>
+      <a href="historial.html">Historial de Boletas</a>
       <a href="index.html">Cerrar Sesión</a>
     </nav>
   </header>
@@ -29,33 +28,23 @@
     // Obtener el historial de ventas desde localStorage
     const salesHistory = JSON.parse(localStorage.getItem('salesHistory')) || [];
 
-    // Crear un objeto de venta simulado (en la práctica, este dato se genera dinámicamente)
-    const currentSale = {
-      date: new Date().toLocaleString(),
-      totalAmount: 120.00, // monto total
-      tip: 10.00,          // propina
-      finalAmount: 130.00, // total con propina
-      items: [
-        { name: 'Producto A', quantity: 2, price: 50.00 },
-        { name: 'Producto B', quantity: 1, price: 20.00 }
-      ]
-    };
-
-    // Agregar la venta actual al historial y guardarla en localStorage
-    salesHistory.push(currentSale);
-    localStorage.setItem('salesHistory', JSON.stringify(salesHistory));
-
-    // Renderizar la venta actual en la boleta
-    renderReceipt(currentSale);
+    // Si no hay ventas registradas
+    if (salesHistory.length === 0) {
+      document.getElementById('receipt-details').innerHTML = '<p>No hay ventas registradas.</p>';
+    } else {
+      // Mostrar la última venta realizada
+      const lastSale = salesHistory[salesHistory.length - 1];
+      renderReceipt(lastSale);
+    }
 
     // Función para renderizar la boleta
     function renderReceipt(sale) {
       const receiptDetails = document.getElementById('receipt-details');
       let html = `
         <p><strong>Fecha:</strong> ${sale.date}</p>
-        <p><strong>Monto Total:</strong> $${sale.totalAmount.toFixed(2)}</p>
-        <p><strong>Propina:</strong> $${sale.tip.toFixed(2)}</p>
-        <p><strong>Total con Propina:</strong> $${sale.finalAmount.toFixed(2)}</p>
+        <p><strong>Monto Total:</strong> ${formatCurrency(sale.totalAmount)}</p>
+        <p><strong>Propina:</strong> ${formatCurrency(sale.tip)}</p>
+        <p><strong>Total con Propina:</strong> ${formatCurrency(sale.finalAmount)}</p>
         <h3>Productos Vendidos:</h3>
         <ul>
       `;
@@ -63,8 +52,8 @@
       sale.items.forEach(item => {
         html += `
           <li>
-            ${item.name} - ${item.quantity} unidades a $${item.price.toFixed(2)} c/u
-            <br>Total: $${(item.quantity * item.price).toFixed(2)}
+            ${item.name} - ${item.quantity} unidades a ${formatCurrency(item.price)} c/u
+            <br>Total: ${formatCurrency(item.quantity * item.price)}
           </li>
         `;
       });
@@ -72,6 +61,12 @@
       html += '</ul>';
       receiptDetails.innerHTML = html;
     }
+
+    // Función para formatear en pesos chilenos
+    function formatCurrency(amount) {
+      return new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(amount);
+    }
   </script>
 </body>
 </html>
+
