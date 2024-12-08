@@ -54,6 +54,11 @@
   </main>
 
   <script>
+    // Función para formatear en pesos chilenos
+    function formatCurrency(amount) {
+      return new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(amount);
+    }
+
     let salesStock = JSON.parse(localStorage.getItem('salesStock')) || [];
     let salesHistory = JSON.parse(localStorage.getItem('salesHistory')) || [];
     let cart = [];
@@ -69,7 +74,7 @@
       salesStock.forEach((item, index) => {
         const li = document.createElement('li');
         li.innerHTML = `
-          ${item.name} - ${item.quantity} unidades disponibles - $${item.price}
+          ${item.name} - ${item.quantity} unidades disponibles - ${formatCurrency(item.price)}
           <button onclick="editProduct(${index})">Editar</button>
           <button onclick="deleteProduct(${index})">Eliminar</button>
         `;
@@ -133,7 +138,7 @@
         ? '<li>El carrito está vacío.</li>'
         : cart.map((item, index) => `
           <li>
-            ${item.name} - ${item.quantity} unidades a $${item.price} c/u
+            ${item.name} - ${item.quantity} unidades a ${formatCurrency(item.price)} c/u
             <button onclick="removeFromCart(${index})">Eliminar</button>
           </li>
         `).join('');
@@ -165,7 +170,7 @@
       renderCart();
 
       const totalAmount = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-      document.getElementById('suggested-tip').textContent = `Propina sugerida: $${(totalAmount * 0.1).toFixed(2)}`;
+      document.getElementById('suggested-tip').textContent = `Propina sugerida: ${formatCurrency(totalAmount * 0.1)}`;
     });
 
     // Eliminar del carrito
@@ -209,7 +214,7 @@
       localStorage.setItem('salesStock', JSON.stringify(salesStock));
       cart = [];
       renderSalesStock();
-      alert(`Venta registrada exitosamente. Total: $${finalAmount.toFixed(2)}`);
+      alert(`Venta registrada exitosamente. Total: ${formatCurrency(finalAmount)}`);
     });
 
     renderSalesStock();
