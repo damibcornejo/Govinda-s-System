@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Historial de Ventas</title>
+  <title>Historial de Boletas</title>
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="history.css">
 </head>
@@ -33,16 +33,21 @@
     const salesByDate = {};
 
     salesHistory.forEach(sale => {
-      const saleDate = new Date(sale.date).toLocaleDateString();
-      if (!salesByDate[saleDate]) {
-        salesByDate[saleDate] = { totalSales: 0, sales: [] };
+      const saleDate = new Date(sale.date);
+      
+      // Validar si la fecha es correcta
+      if (saleDate.getTime()) {  // Verifica que la fecha sea válida
+        const formattedDate = saleDate.toLocaleDateString();
+        if (!salesByDate[formattedDate]) {
+          salesByDate[formattedDate] = { totalSales: 0, sales: [] };
+        }
+        salesByDate[formattedDate].totalSales += sale.finalAmount;
+        salesByDate[formattedDate].sales.push(sale);
       }
-      salesByDate[saleDate].totalSales += sale.finalAmount;
-      salesByDate[saleDate].sales.push(sale);
     });
 
     // Mostrar el historial de ventas
-    if (salesHistory.length === 0) {
+    if (Object.keys(salesByDate).length === 0) {
       historyList.innerHTML = '<p>No hay boletas registradas.</p>';
     } else {
       let html = '';
