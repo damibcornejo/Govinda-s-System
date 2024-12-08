@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Historial de Boletas</title>
+  <title>Historial de Ventas</title>
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="history.css">
 </head>
@@ -12,61 +12,68 @@
     <h1>Historial de Boletas</h1>
     <nav>
       <a href="menu.html">Volver a Menú</a>
-      <a href="inventory.html">Inventario</a>
+      <a href="ventas.html">Registrar Venta</a>
       <a href="index.html">Cerrar Sesión</a>
     </nav>
   </header>
   <main>
-    <section>
-      <h2>Boletas Registradas</h2>
-      <div id="history-list">
-        <!-- Aquí se renderizan todas las boletas -->
-      </div>
-    </section>
+    <section id="history-list"></section>
   </main>
+
   <script>
-    // Recuperar el historial de boletas desde localStorage
-const historyList = document.getElementById('history-list');  // Aquí accedes al elemento con id "history-list"
-const salesHistory = JSON.parse(localStorage.getItem('salesHistory') || '[]');
+    // Función para formatear en pesos chilenos
+    function formatCurrency(amount) {
+      return new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(amount);
+    }
 
-// Depurar: confirma que salesHistory sea un array válido
-console.log('Contenido de salesHistory:', salesHistory);
-if (!Array.isArray(salesHistory)) {
-  console.error('Error: salesHistory no es un array válido.', salesHistory);
-  historyList.innerHTML = '<p>Error al cargar el historial. Por favor, recargue la página.</p>';
-} else if (salesHistory.length === 0) {
-  historyList.innerHTML = '<p>No hay boletas registradas.</p>';
-} else {
-  let html = '';
-  salesHistory.forEach((sale, index) => {
-    html += `
-      <div class="receipt">
-        <h3>Boleta ${index + 1}</h3>
-        <p><strong>Fecha:</strong> ${sale.date}</p>
-        <p><strong>Monto Total:</strong> ${formatCurrency(sale.totalAmount)}</p>
-        <p><strong>Propina:</strong> ${formatCurrency(sale.tip)}</p>
-        <p><strong>Total con Propina:</strong> ${formatCurrency(sale.finalAmount)}</p>
-        <h4>Productos Vendidos:</h4>
-        <ul>
-    `;
-    sale.items.forEach(item => {
-      html += `
-        <li>
-          ${item.name} - ${item.quantity} unidades a ${formatCurrency(item.price)} c/u
-          <br>Total: ${formatCurrency(item.quantity * item.price)}
-        </li>
-      `;
+    const salesHistory = JSON.parse(localStorage.getItem('salesHistory')) || [];
+    const historyList = document.getElementById('history-list');
+
+    // Crear objeto para agrupar las ventas por día
+    const salesByDate = {};
+
+    salesHistory.forEach(sale => {
+      const saleDate = new Date(sale.date).toLocaleDateString();
+      if (!salesByDate[saleDate]) {
+        salesByDate[saleDate] = { totalSales: 0, sales: [] };
+      }
+      salesByDate[saleDate].totalSales += sale.finalAmount;
+      salesByDate[saleDate].sales.push(sale);
     });
-    html += '</ul></div>';
-  });
-  historyList.innerHTML = html;
-}
 
-// Función para formatear en pesos chilenos
-function formatCurrency(amount) {
-  return new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(amount);
-}
+    // Mostrar el historial de ventas
+    if (salesHistory.length === 0) {
+      historyList.innerHTML = '<p>No hay boletas registradas.</p>';
+    } else {
+      let html = '';
+      Object.keys(salesByDate).forEach(date => {
+        html += `
+          <div class="date-sales">
+            <h3>Ventas del ${date}</h3>
+            <p><strong>Total de Ventas:</strong> ${formatCurrency(salesByDate[date].totalSales)}</p>
+            <h4>Detalles de las Boletas:</h4>
+            <ul>
+        `;
+        salesByDate[date].sales.forEach(sale => {
+          html += `
+            <li>
+              <p><strong>Fecha:</strong> ${sale.date}</p>
+              <p><strong>Total Venta:</strong> ${formatCurrency(sale.totalAmount)}</p>
+              <p><strong>Propina:</strong> ${formatCurrency(sale.tip)}</p>
+              <p><strong>Total con Propina:</strong> ${formatCurrency(sale.finalAmount)}</p>
+              <ul>
+                ${sale.items.map(item => `
+                  <li>${item.name} - ${item.quantity} unidades a ${formatCurrency(item.price)} c/u</li>
+                `).join('')}
+              </ul>
+            </li>
+          `;
+        });
+        html += '</ul></div>';
+      });
 
+      historyList.innerHTML = html;
+    }
   </script>
 </body>
 </html>
