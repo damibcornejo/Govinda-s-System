@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Historial de Boletas</title>
+  <title>Historial de Ventas</title>
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="history.css">
 </head>
@@ -12,7 +12,7 @@
     <h1>Historial de Boletas</h1>
     <nav>
       <a href="menu.html">Volver a Menú</a>
-      <a href="inventory.html">Inventario</a>
+      <a href="ventas.html">Registrar Venta</a>
       <a href="index.html">Cerrar Sesión</a>
     </nav>
   </header>
@@ -29,29 +29,20 @@
     const salesHistory = JSON.parse(localStorage.getItem('salesHistory')) || [];
     const historyList = document.getElementById('history-list');
 
-    // Mostrar los datos en la consola para asegurarse de que se están recuperando correctamente
-    console.log('Historial de ventas:', salesHistory);
-
     // Crear objeto para agrupar las ventas por día
     const salesByDate = {};
 
     salesHistory.forEach(sale => {
-      const saleDate = new Date(sale.date);
-      console.log('Fecha de la venta:', sale.date, 'Fecha objeto:', saleDate);
-
-      // Validar si la fecha es correcta
-      if (saleDate.getTime()) {  // Verifica que la fecha sea válida
-        const formattedDate = saleDate.toLocaleDateString();
-        if (!salesByDate[formattedDate]) {
-          salesByDate[formattedDate] = { totalSales: 0, sales: [] };
-        }
-        salesByDate[formattedDate].totalSales += sale.finalAmount;
-        salesByDate[formattedDate].sales.push(sale);
+      const saleDate = new Date(sale.date).toLocaleDateString();
+      if (!salesByDate[saleDate]) {
+        salesByDate[saleDate] = { totalSales: 0, sales: [] };
       }
+      salesByDate[saleDate].totalSales += sale.finalAmount;
+      salesByDate[saleDate].sales.push(sale);
     });
 
     // Mostrar el historial de ventas
-    if (Object.keys(salesByDate).length === 0) {
+    if (salesHistory.length === 0) {
       historyList.innerHTML = '<p>No hay boletas registradas.</p>';
     } else {
       let html = '';
@@ -86,3 +77,4 @@
   </script>
 </body>
 </html>
+
