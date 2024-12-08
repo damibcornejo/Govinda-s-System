@@ -29,17 +29,7 @@
     const salesHistory = JSON.parse(localStorage.getItem('salesHistory')) || [];
     const historyList = document.getElementById('history-list');
 
-    // Crear objeto para agrupar las ventas por día
-    const salesByDate = {};
-
-    salesHistory.forEach(sale => {
-      const saleDate = new Date(sale.date).toLocaleDateString();
-      if (!salesByDate[saleDate]) {
-        salesByDate[saleDate] = { totalSales: 0, sales: [] };
-      }
-      salesByDate[saleDate].totalSales += sale.finalAmount;
-      salesByDate[saleDate].sales.push(sale);
-    });
+    
 
     // Mostrar el historial de ventas
     if (salesHistory.length === 0) {
