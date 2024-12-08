@@ -38,7 +38,7 @@
       renderReceipt(lastSale);
     }
     // Agregar la venta actual al historial
-  salesHistory.push(currentSale);
+  salesHistory.push(lastSale);
 
   // Guardar el historial actualizado en localStorage
   localStorage.setItem('salesHistory', JSON.stringify(salesHistory));
