@@ -17,7 +17,9 @@
     </nav>
   </header>
   <main>
+    <section id="total-sales"></section>
     <section id="history-list"></section>
+    <button id="clear-history">Limpiar Historial</button>
   </main>
 
   <script>
@@ -28,11 +30,18 @@
 
     const salesHistory = JSON.parse(localStorage.getItem('salesHistory')) || [];
     const historyList = document.getElementById('history-list');
+    const totalSales = document.getElementById('total-sales');
+    const clearHistoryBtn = document.getElementById('clear-history');
 
     // Mostrar el historial de ventas
     if (salesHistory.length === 0) {
       historyList.innerHTML = '<p>No hay boletas registradas.</p>';
+      totalSales.innerHTML = '';
     } else {
+      // Calcular el total acumulado de las ventas
+      const totalAmount = salesHistory.reduce((sum, sale) => sum + sale.finalAmount, 0);
+      totalSales.innerHTML = `<h2>Total Acumulado: ${formatCurrency(totalAmount)}</h2>`;
+
       let html = '';
       salesHistory.forEach(sale => {
         html += `
@@ -51,6 +60,12 @@
       });
       historyList.innerHTML = html;
     }
+
+    // Limpiar el historial de ventas
+    clearHistoryBtn.addEventListener('click', () => {
+      localStorage.removeItem('salesHistory'); // Eliminar las boletas del localStorage
+      location.reload(); // Recargar la página para reflejar el cambio
+    });
   </script>
 </body>
 </html>
