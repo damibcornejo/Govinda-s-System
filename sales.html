@@ -19,6 +19,10 @@
   <main>
     <section>
       <h2>Productos para Venta</h2>
+
+      <!-- Campo de búsqueda -->
+      <input type="text" id="search-product" placeholder="Buscar producto por nombre">
+
       <ul id="sales-stock"></ul>
 
       <form id="add-product-form">
@@ -63,31 +67,51 @@
     let salesHistory = JSON.parse(localStorage.getItem('salesHistory')) || [];
     let cart = [];
 
-    // Renderizar productos del stock
-    function renderSalesStock() {
+    // Renderizar productos del stock con filtro
+    function renderSalesStock(filter = '') {
       const salesList = document.getElementById('sales-stock');
       const productSelect = document.getElementById('product-select');
 
       salesList.innerHTML = '';
       productSelect.innerHTML = '<option value="">Seleccione un producto</option>';
 
-      salesStock.forEach((item, index) => {
-        const li = document.createElement('li');
-        li.innerHTML = `
-          ${item.name} - ${item.quantity} unidades disponibles - ${formatCurrency(item.price)}
-          <button onclick="editProduct(${index})">Editar</button>
-          <button onclick="deleteProduct(${index})">Eliminar</button>
-        `;
-        salesList.appendChild(li);
+      salesStock
+        .filter(item => item.name.toLowerCase().includes(filter.toLowerCase()))
+        .forEach((item, index) => {
+          const li = document.createElement('li');
+          li.innerHTML = `
+            ${item.name} - ${item.quantity} unidades disponibles - ${formatCurrency(item.price)}
+            <button onclick="editProduct(${index})">Editar</button>
+            <button onclick="deleteProduct(${index})">Eliminar</button>
+          `;
+          salesList.appendChild(li);
 
-        const option = document.createElement('option');
-        option.value = index;
-        option.textContent = item.name;
-        productSelect.appendChild(option);
-      });
+          const option = document.createElement('option');
+          option.value = index;
+          option.textContent = item.name;
+          productSelect.appendChild(option);
+        });
     }
 
-    // Agregar producto
+    // Renderizar carrito
+    function renderCart() {
+      const cartList = document.getElementById('cart-list');
+      const totalAmount = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+      cartList.innerHTML = cart.length === 0
+        ? '<li>El carrito está vacío.</li>'
+        : cart.map((item, index) => `
+          <li>
+            ${item.name} - ${item.quantity} unidades a ${formatCurrency(item.price)} c/u
+            <button onclick="removeFromCart(${index})">Eliminar</button>
+          </li>
+        `).join('');
+
+      // Actualizar propina sugerida
+      document.getElementById('suggested-tip').textContent = `Propina sugerida: ${formatCurrency(totalAmount * 0.1)}`;
+    }
+
+    // Añadir producto
     document.getElementById('add-product-form').addEventListener('submit', function(event) {
       event.preventDefault();
       const name = document.getElementById('product-name').value;
@@ -131,51 +155,55 @@
       }
     }
 
-    // Renderizar carrito
-    function renderCart() {
-      const cartList = document.getElementById('cart-list');
-      cartList.innerHTML = cart.length === 0
-        ? '<li>El carrito está vacío.</li>'
-        : cart.map((item, index) => `
-          <li>
-            ${item.name} - ${item.quantity} unidades a ${formatCurrency(item.price)} c/u
-            <button onclick="removeFromCart(${index})">Eliminar</button>
-          </li>
-        `).join('');
-    }
-
     // Añadir al carrito
     document.getElementById('add-to-cart').addEventListener('click', function () {
-      const productIndex = document.getElementById('product-select').value;
+      const productIndex = parseInt(document.getElementById('product-select').value);
       const saleQuantity = parseInt(document.getElementById('sale-quantity').value);
 
-      if (productIndex === '' || isNaN(saleQuantity) || saleQuantity <= 0) {
+      if (isNaN(productIndex) || isNaN(saleQuantity) || saleQuantity <= 0) {
         alert('Seleccione un producto y una cantidad válida.');
         return;
       }
 
       const selectedProduct = salesStock[productIndex];
+
       if (saleQuantity > selectedProduct.quantity) {
         alert('Cantidad insuficiente en el stock.');
         return;
       }
 
-      cart.push({
-        name: selectedProduct.name,
-        price: selectedProduct.price,
-        quantity: saleQuantity,
-      });
+      // Reducir cantidad en el stock
+      selectedProduct.quantity -= saleQuantity;
 
+      // Verificar si el producto ya está en el carrito
+      const cartItemIndex = cart.findIndex(item => item.name === selectedProduct.name);
+      if (cartItemIndex !== -1) {
+        // Actualizar cantidad si ya existe
+        cart[cartItemIndex].quantity += saleQuantity;
+      } else {
+        // Agregar nuevo producto al carrito
+        cart.push({
+          name: selectedProduct.name,
+          price: selectedProduct.price,
+          quantity: saleQuantity,
+        });
+      }
+
+      renderSalesStock(); // Actualizar el stock visible
+      renderCart();       // Actualizar el carrito visible
       document.getElementById('register-sale-form').reset();
-      renderCart();
-
-      const totalAmount = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-      document.getElementById('suggested-tip').textContent = `Propina sugerida: ${formatCurrency(totalAmount * 0.1)}`;
     });
 
     // Eliminar del carrito
     function removeFromCart(index) {
+      const item = cart[index];
+      const stockProduct = salesStock.find(p => p.name === item.name);
+
+      // Restaurar cantidad al stock
+      stockProduct.quantity += item.quantity;
+
       cart.splice(index, 1);
+      renderSalesStock();
       renderCart();
     }
 
@@ -217,7 +245,13 @@
       alert(`Venta registrada exitosamente. Total: ${formatCurrency(finalAmount)}`);
     });
 
+    // Búsqueda dinámica
+    document.getElementById('search-product').addEventListener('input', function (event) {
+      renderSalesStock(event.target.value);
+    });
+
     renderSalesStock();
+    renderCart();
   </script>
 </body>
 </html>
