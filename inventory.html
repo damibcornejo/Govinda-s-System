@@ -19,10 +19,12 @@
   <main>
     <section>
       <h2>Productos</h2>
+      <input type="text" id="search-item" placeholder="Buscar producto por nombre">
       <ul id="inventory-list"></ul>
       <form id="add-item-form">
         <input type="text" id="item-name" placeholder="Nombre del producto" required>
         <input type="number" id="item-quantity" placeholder="Cantidad" required>
+        <input type="number" id="item-price" placeholder="Precio de compra" required>
         <button type="submit">Agregar Producto</button>
       </form>
     </section>
@@ -31,18 +33,24 @@
   <script>
     let inventory = JSON.parse(localStorage.getItem('inventory')) || [];
 
-    function renderInventory() {
+    function renderInventory(filter = '') {
       const inventoryList = document.getElementById('inventory-list');
       inventoryList.innerHTML = '';
-      inventory.forEach((item, index) => {
-        const li = document.createElement('li');
-        li.innerHTML = `
-          ${item.name} - ${item.quantity} unidades
-          <button onclick="deleteItem(${index})">Eliminar</button>
-          <button onclick="editItem(${index})">Editar</button>
-        `;
-        inventoryList.appendChild(li);
-      });
+      inventory
+        .filter(item => item.name.toLowerCase().includes(filter.toLowerCase()))
+        .forEach((item, index) => {
+          const li = document.createElement('li');
+          li.innerHTML = `
+            ${item.name} - ${item.quantity} unidades - ${formatCurrency(item.price)}
+            <button onclick="deleteItem(${index})">Eliminar</button>
+            <button onclick="editItem(${index})">Editar</button>
+          `;
+          inventoryList.appendChild(li);
+        });
+    }
+
+    function formatCurrency(amount) {
+      return new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(amount);
     }
 
     function deleteItem(index) {
@@ -53,13 +61,15 @@
 
     function editItem(index) {
       const newQuantity = prompt("Nueva cantidad:", inventory[index].quantity);
-      if (newQuantity && !isNaN(newQuantity)) {
-        if (parseInt(newQuantity) >= 0) {
+      const newPrice = prompt("Nuevo precio de compra:", inventory[index].price);
+      if (newQuantity && !isNaN(newQuantity) && newPrice && !isNaN(newPrice)) {
+        if (parseInt(newQuantity) >= 0 && parseFloat(newPrice) >= 0) {
           inventory[index].quantity = parseInt(newQuantity);
+          inventory[index].price = parseFloat(newPrice);
           localStorage.setItem('inventory', JSON.stringify(inventory));
           renderInventory();
         } else {
-          alert("La cantidad no puede ser negativa.");
+          alert("Cantidad y precio no pueden ser negativos.");
         }
       }
     }
@@ -69,16 +79,21 @@
       
       const name = document.getElementById('item-name').value;
       const quantity = parseInt(document.getElementById('item-quantity').value);
+      const price = parseFloat(document.getElementById('item-price').value);
       
-      if (quantity < 0) {
-        alert("La cantidad no puede ser negativa. Por favor, ingresa un valor válido.");
+      if (quantity < 0 || price < 0) {
+        alert("Cantidad y precio no pueden ser negativos. Por favor, ingresa valores válidos.");
         return;
       }
       
-      inventory.push({ name, quantity });
+      inventory.push({ name, quantity, price });
       localStorage.setItem('inventory', JSON.stringify(inventory));
       renderInventory();
       event.target.reset();
+    });
+
+    document.getElementById('search-item').addEventListener('input', function(event) {
+      renderInventory(event.target.value);
     });
 
     renderInventory();
