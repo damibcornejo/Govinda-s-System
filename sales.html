@@ -122,6 +122,11 @@
         alert('Por favor, complete los campos correctamente.');
         return;
       }
+       const existingProduct = salesStock.find(item => item.name.toLowerCase() === name);
+      if (existingProduct) {
+        alert("Este producto ya existe en el stock.");
+        return;
+      }
 
       salesStock.push({ name, price, quantity });
       localStorage.setItem('salesStock', JSON.stringify(salesStock));
