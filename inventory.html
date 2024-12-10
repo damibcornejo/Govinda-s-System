@@ -85,7 +85,11 @@
         alert("Cantidad y precio no pueden ser negativos. Por favor, ingresa valores válidos.");
         return;
       }
-      
+       const existingProduct = inventory.find(item => item.name.toLowerCase() === name);
+      if (existingProduct) {
+        alert("Este producto ya existe en el inventario.");
+        return;
+      }
       inventory.push({ name, quantity, price });
       localStorage.setItem('inventory', JSON.stringify(inventory));
       renderInventory();
