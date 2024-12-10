@@ -23,6 +23,7 @@
         <div id="password-field" style="display: none;">
           <label id="password-label" for="admin-password">Contraseña:</label>
           <input type="password" id="admin-password" placeholder="Ingrese su contraseña">
+          <button type="button" id="change-password" style="display: none;">Cambiar Contraseña</button>
         </div>
         <button type="submit">Ingresar</button>
       </form>
@@ -35,6 +36,7 @@
     const passwordField = document.getElementById('password-field');
     const passwordInput = document.getElementById('admin-password');
     const passwordLabel = document.getElementById('password-label');
+    const changePasswordButton = document.getElementById('change-password');
 
     let adminPassword = localStorage.getItem('adminPassword');
 
@@ -45,8 +47,10 @@
         passwordLabel.textContent = adminPassword
           ? 'Contraseña:'
           : 'Cree una contraseña:';
+        changePasswordButton.style.display = adminPassword ? 'block' : 'none';
       } else {
         passwordField.style.display = 'none';
+        changePasswordButton.style.display = 'none';
       }
     });
 
@@ -73,6 +77,23 @@
         window.location.href = 'menu.html';
       } else {
         alert('Seleccione un perfil para continuar.');
+      }
+    });
+
+    // Cambiar contraseña
+    changePasswordButton.addEventListener('click', function() {
+      const currentPassword = prompt('Ingrese su contraseña actual:');
+      if (currentPassword === adminPassword) {
+        const newPassword = prompt('Ingrese su nueva contraseña:');
+        if (newPassword && newPassword.trim() !== '') {
+          adminPassword = newPassword.trim();
+          localStorage.setItem('adminPassword', adminPassword);
+          alert('Contraseña cambiada exitosamente.');
+        } else {
+          alert('La contraseña nueva no puede estar vacía.');
+        }
+      } else {
+        alert('Contraseña actual incorrecta.');
       }
     });
   </script>
