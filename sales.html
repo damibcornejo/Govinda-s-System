@@ -122,7 +122,7 @@
         alert('Por favor, complete los campos correctamente.');
         return;
       }
-       const existingProduct = salesStock.find(item => item.name.toLowerCase() === name);
+       const existingProduct = salesStock.find(item => item.name.toLowerCase() === name.toLowerCase();
       if (existingProduct) {
         alert("Este producto ya existe en el stock.");
         return;
@@ -177,8 +177,8 @@
         return;
       }
 
-      // Reducir cantidad en el stock
-      selectedProduct.quantity -= saleQuantity;
+      /*// Reducir cantidad en el stock
+      selectedProduct.quantity -= saleQuantity;*/
 
       // Verificar si el producto ya está en el carrito
       const cartItemIndex = cart.findIndex(item => item.name === selectedProduct.name);
