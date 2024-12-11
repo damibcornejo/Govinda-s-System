@@ -193,7 +193,6 @@
           quantity: saleQuantity,
         });
       }
-      cart=[];
       renderSalesStock(); // Actualizar el stock visible
       renderCart();       // Actualizar el carrito visible
       document.getElementById('register-sale-form').reset();
@@ -247,6 +246,7 @@
       localStorage.setItem('salesStock', JSON.stringify(salesStock));
       cart = [];
       renderSalesStock();
+      renderCart();
       alert(`Venta registrada exitosamente. Total: ${formatCurrency(finalAmount)}`);
     });
 
