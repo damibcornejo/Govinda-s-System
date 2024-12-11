@@ -1,9 +1,13 @@
 /* Contenedor general */
-main {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  padding: 20px;
+body {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f3e5f5;
+  font-family: 'Roboto', sans-serif;
+  margin: 0;
 }
 
 /* Estilo del encabezado */
@@ -12,7 +16,7 @@ header {
   color: white;
   text-align: center;
   padding: 20px 0;
-  font-family: 'Roboto', sans-serif;
+  width: 100%;
 }
 
 header h1 {
@@ -40,18 +44,32 @@ header nav a:active {
   background-color: #6a1b9a;
 }
 
-/* Contenedores de las secciones */
+/* Estilo para los contenedores de las secciones */
+main {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 20px;
+  width: 90%;
+  max-width: 1000px;
+  margin-top: 30px;
+}
+
+/* Sección de producto */
 .product-section, .cart-section, .sale-section {
-  background-color: #f3e5f5;
+  background-color: #fff;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 500px;
 }
 
 .product-section h2, .cart-section h3, .sale-section h3 {
   font-size: 22px;
   margin-bottom: 15px;
-  color: #5e35b1; /* Morado oscuro */
+  color: #333;
 }
 
 /* Estilo de los productos listados */
@@ -76,45 +94,19 @@ form input, form select {
   padding: 10px;
   margin: 8px 0;
   border-radius: 5px;
-  border: 1px solid #ccc;
+  border: 1px solid #e1bee7;
 }
 
-form button {
-  display: block;
-  margin: 20px auto;
-  padding: 10px 20px;
+/* Botones generales */
+button {
   background-color: #ba68c8;
   color: white;
-  font-weight: bold;
+  padding: 10px 20px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-form button:hover {
-  background-color: #8e24aa;
-}
-
-/* Estilo del carrito */
-#cart-list {
-  list-style: none;
-  padding: 0;
-}
-
-#cart-list li {
-  background-color: #fff;
-  border: 1px solid #e1bee7;
-  border-radius: 5px;
-  margin: 10px 0;
-  padding: 10px 15px;
   font-size: 16px;
-  color: #333;
-}
-
-#suggested-tip {
-  font-weight: bold;
-  color: #5e35b1;
+  transition: background-color 0.3s;
 }
 
 button:hover {
@@ -123,4 +115,59 @@ button:hover {
 
 button:active {
   background-color: #6a1b9a;
+}
+
+/* Estilo de los botones Editar y Eliminar */
+button.edit-btn, button.delete-btn {
+  padding: 5px 10px; /* Reducir el tamaño del padding */
+  font-size: 14px; /* Reducir el tamaño de la fuente */
+  border-radius: 3px; /* Bordes más pequeños */
+  cursor: pointer;
+}
+
+/* Botón Editar */
+button.edit-btn {
+  background-color: #4caf50; /* Verde para el botón de editar */
+}
+
+button.edit-btn:hover {
+  background-color: #388e3c; /* Hover verde oscuro */
+}
+
+/* Botón Eliminar */
+button.delete-btn {
+  background-color: #f44336; /* Rojo para el botón de eliminar */
+}
+
+button.delete-btn:hover {
+  background-color: #d32f2f; /* Hover rojo oscuro */
+}
+
+/* Estilo de los elementos en el carrito */
+#cart-list {
+  list-style: none;
+  padding: 0;
+}
+
+#cart-list li {
+  background-color: #f3e5f5;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  font-size: 16px;
+}
+
+/* Input para la propina */
+#tip {
+  padding: 8px;
+  width: 100%;
+  margin-top: 10px;
+  border: 1px solid #e1bee7;
+  border-radius: 5px;
+}
+
+#suggested-tip {
+  font-size: 14px;
+  color: #7b1fa2;
+  margin-top: 10px;
 }
