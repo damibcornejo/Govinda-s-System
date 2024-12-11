@@ -1,7 +1,14 @@
+/* Contenedor general */
+main {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  padding: 20px;
+}
+
 /* Estilo del encabezado */
-/* */
 header {
-  background-color: #CAAED8; /* Morado claro */
+  background-color: #CAAED8;
   color: white;
   text-align: center;
   padding: 20px 0;
@@ -13,10 +20,9 @@ header h1 {
   font-size: 28px;
 }
 
-/* Estilo de los enlaces del menú */
 header nav a {
   display: inline-block;
-  background-color: #ba68c8; /* Morado más claro */
+  background-color: #ba68c8;
   color: white;
   text-decoration: none;
   padding: 8px 15px;
@@ -27,57 +33,94 @@ header nav a {
 }
 
 header nav a:hover {
-  background-color: #8e24aa; /* Morado más oscuro */
+  background-color: #8e24aa;
 }
 
 header nav a:active {
-  background-color: #6a1b9a; /* Morado profundo */
+  background-color: #6a1b9a;
 }
 
-/* Lista de productos */
+/* Contenedores de las secciones */
+.product-section, .cart-section, .sale-section {
+  background-color: #f3e5f5;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.product-section h2, .cart-section h3, .sale-section h3 {
+  font-size: 22px;
+  margin-bottom: 15px;
+  color: #5e35b1; /* Morado oscuro */
+}
+
+/* Estilo de los productos listados */
 #sales-stock {
   list-style: none;
   padding: 0;
-  font-family: 'Roboto', sans-serif;
 }
 
 #sales-stock li {
-  background-color: #f3e5f5; /* Fondo morado muy claro */
-  border: 1px solid #e1bee7; /* Morado más oscuro para el borde */
+  background-color: #fff;
+  border: 1px solid #e1bee7;
   border-radius: 5px;
   margin: 10px 0;
   padding: 10px 15px;
   font-size: 16px;
-  color: #333; /* Morado para el texto */
+  color: #333;
 }
 
-/* Botones (Agregar Producto y Registrar Venta) */
-button {
-  background-color: #ba68c8; /* Morado más claro */
+/* Estilo de los formularios */
+form input, form select {
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+form button {
+  display: block;
+  margin: 20px auto;
+  padding: 10px 20px;
+  background-color: #ba68c8;
   color: white;
-  border: none;
-
   font-weight: bold;
-
-  padding: 5px 10px;
-  font-size: 14px;
-  border-radius: 3px;
-  margin-left: 10px;
+  border: none;
+  border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s;
 }
 
+form button:hover {
+  background-color: #8e24aa;
+}
+
+/* Estilo del carrito */
+#cart-list {
+  list-style: none;
+  padding: 0;
+}
+
+#cart-list li {
+  background-color: #fff;
+  border: 1px solid #e1bee7;
+  border-radius: 5px;
+  margin: 10px 0;
+  padding: 10px 15px;
+  font-size: 16px;
+  color: #333;
+}
+
+#suggested-tip {
+  font-weight: bold;
+  color: #5e35b1;
+}
+
 button:hover {
-  background-color: #8e24aa; /* Morado más oscuro */
+  background-color: #8e24aa;
 }
 
 button:active {
-  background-color: #6a1b9a; /* Morado profundo */
-}
-
-/* Botón "Registrar Venta" y "Agregar Producto" centrado */
-form button {
-  display: block;
-  margin: 20px auto;
-  max-width: 200px;
+  background-color: #6a1b9a;
 }
