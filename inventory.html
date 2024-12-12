@@ -42,8 +42,8 @@
           const li = document.createElement('li');
           li.innerHTML = `
             ${item.name} - ${item.quantity} unidades - ${formatCurrency(item.price)}
-            <button onclick="deleteItem(${index})">Eliminar</button>
             <button onclick="editItem(${index})">Editar</button>
+            <button onclick="deleteItem(${index})">Eliminar</button>
           `;
           inventoryList.appendChild(li);
         });
