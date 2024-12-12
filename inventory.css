@@ -111,10 +111,10 @@ button:active {
 }
 
 #inventory-list button:first-of-type {
-  background-color: #ffa000; /* Naranja para editar */
+  background-color: #4a90e2; /* Celeste para editar */
 }
 
 #inventory-list button:first-of-type:hover {
-  background-color: #fb8c00;
+  background-color: #285A8B;
 }
 
