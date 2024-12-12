@@ -127,16 +127,16 @@ button.edit-btn, button.delete-btn {
 
 /* Botón Editar */
 button.edit-btn {
-  background-color: #4caf50; /* Verde para el botón de editar */
+  background-color: #4a90e2; /* Celeste para el botón de editar */
 }
 
 button.edit-btn:hover {
-  background-color: #388e3c; /* Hover verde oscuro */
+  background-color: #388e3c; /* Hover celeste oscuro */
 }
 
 /* Botón Eliminar */
 button.delete-btn {
-  background-color: #f44336; /* Rojo para el botón de eliminar */
+  background-color: #285A8B; /* Rojo para el botón de eliminar */
 }
 
 button.delete-btn:hover {
