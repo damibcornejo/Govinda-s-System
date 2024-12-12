@@ -136,7 +136,7 @@ button.edit-btn:hover {
 
 /* Botón Eliminar */
 button.delete-btn {
-  background-color:#f44336; /* Rojo para el botón de eliminar */
+  background-color: #f44336; /* Rojo para el botón de eliminar */
 }
 
 button.delete-btn:hover {
